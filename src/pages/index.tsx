@@ -4,6 +4,21 @@ import { LockReset, Help, Search, Send, ExpandMore, ExpandLess, SmartToy, ArrowF
 import ChatInterface from '../components/ChatInterface';
 import Sidebar from '../components/Sidebar';
 
+// Royal iTech brand colors
+const BRAND_COLORS = {
+  primary: '#002366', // Royal blue
+  secondary: '#7851a9', // Purple
+  accent: '#f2c52e', // Gold
+  text: {
+    primary: '#2a3535',
+    secondary: '#64748B'
+  },
+  background: {
+    light: '#f8f9fa',
+    white: '#ffffff'
+  }
+};
+
 export default function Home() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<string>('password-reset');
   const [setInputText, setSetInputText] = useState<(text: string) => void>(() => () => {});
@@ -57,7 +72,7 @@ export default function Home() {
   };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: '#f5f7fb' }}>
+    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: BRAND_COLORS.background.light }}>
       <Sidebar selectedWorkflow={selectedWorkflow} setSelectedWorkflow={setSelectedWorkflow} />
       
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -71,15 +86,15 @@ export default function Home() {
           }}>
             <SmartToy sx={{ 
               fontSize: 40, 
-              color: '#4A6CF7'
+              color: BRAND_COLORS.primary
             }} />
             <Typography variant="h4" sx={{ 
               fontWeight: 600,
-              background: 'linear-gradient(135deg, #4A6CF7 0%, #24219c 100%)',
+              background: `linear-gradient(135deg, ${BRAND_COLORS.primary} 0%, ${BRAND_COLORS.secondary} 100%)`,
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent'
             }}>
-              AI Workflow Assistant
+              Royal AI Assistant
             </Typography>
           </Box>
           
@@ -88,8 +103,9 @@ export default function Home() {
               sx={{ 
                 flex: 2, 
                 p: 3,
-                borderRadius: 3,
-                boxShadow: '0 5px 20px rgba(0,0,0,0.05)'
+                borderRadius: 2,
+                boxShadow: '0 5px 20px rgba(0,0,0,0.05)',
+                border: `1px solid ${BRAND_COLORS.primary}15`
               }}
             >
               <Box sx={{ 
@@ -98,12 +114,12 @@ export default function Home() {
                 gap: 1.5, 
                 mb: 2 
               }}>
-                <Security sx={{ color: '#4A6CF7', fontSize: 28 }} />
+                <Security sx={{ color: BRAND_COLORS.primary, fontSize: 28 }} />
                 <Typography 
                   variant="h6" 
                   sx={{ 
                     fontWeight: 600,
-                    color: '#1B2559'
+                    color: BRAND_COLORS.text.primary
                   }}
                 >
                   Azure AD Assistant
@@ -113,7 +129,7 @@ export default function Home() {
                 variant="body1" 
                 paragraph
                 sx={{ 
-                  color: '#64748B',
+                  color: BRAND_COLORS.text.secondary,
                   mb: 3
                 }}
               >
@@ -122,33 +138,33 @@ export default function Home() {
               <List sx={{ '& .MuiListItem-root': { px: 2, py: 1.5 } }}>
                 <ListItem>
                   <ListItemIcon>
-                    <LockReset sx={{ color: '#4A6CF7' }} />
+                    <LockReset sx={{ color: BRAND_COLORS.primary }} />
                   </ListItemIcon>
                   <ListItemText 
                     primary="Password Management" 
                     secondary="Reset, update, or sync your Azure AD password"
                     primaryTypographyProps={{
                       fontWeight: 500,
-                      color: '#1B2559'
+                      color: BRAND_COLORS.text.primary
                     }}
                     secondaryTypographyProps={{
-                      color: '#64748B'
+                      color: BRAND_COLORS.text.secondary
                     }}
                   />
                 </ListItem>
                 <ListItem>
                   <ListItemIcon>
-                    <Help sx={{ color: '#4A6CF7' }} />
+                    <Help sx={{ color: BRAND_COLORS.primary }} />
                   </ListItemIcon>
                   <ListItemText 
                     primary="Account Security" 
                     secondary="MFA setup, security questions, and account recovery"
                     primaryTypographyProps={{
                       fontWeight: 500,
-                      color: '#1B2559'
+                      color: BRAND_COLORS.text.primary
                     }}
                     secondaryTypographyProps={{
-                      color: '#64748B'
+                      color: BRAND_COLORS.text.secondary
                     }}
                   />
                 </ListItem>
@@ -162,9 +178,10 @@ export default function Home() {
                 flexDirection: 'column',
                 height: '500px',
                 overflow: 'hidden',
-                backgroundColor: '#ffffff',
-                borderRadius: 3,
-                boxShadow: '0 5px 20px rgba(0,0,0,0.05)'
+                backgroundColor: BRAND_COLORS.background.white,
+                borderRadius: 2,
+                boxShadow: '0 5px 20px rgba(0,0,0,0.05)',
+                border: `1px solid ${BRAND_COLORS.primary}15`
               }}
             >
               <Box
@@ -173,22 +190,22 @@ export default function Home() {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
-                  borderBottom: '1px solid rgba(0, 0, 0, 0.06)',
+                  borderBottom: `1px solid ${BRAND_COLORS.primary}15`,
                   cursor: 'pointer',
                   transition: 'background-color 0.2s ease',
                   '&:hover': {
-                    backgroundColor: 'rgba(74, 108, 247, 0.02)'
+                    backgroundColor: `${BRAND_COLORS.primary}05`
                   }
                 }}
                 onClick={togglePrompts}
               >
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  <SmartToy sx={{ color: '#4A6CF7', fontSize: 20 }} />
+                  <SmartToy sx={{ color: BRAND_COLORS.primary, fontSize: 20 }} />
                   <Typography 
                     variant="subtitle1" 
                     sx={{ 
                       fontSize: '0.95rem',
-                      color: '#1B2559',
+                      color: BRAND_COLORS.text.primary,
                       fontWeight: 600
                     }}
                   >
@@ -203,7 +220,7 @@ export default function Home() {
                     transition: 'transform 0.3s ease'
                   }}
                 >
-                  <ExpandMore sx={{ color: '#4A6CF7' }} />
+                  <ExpandMore sx={{ color: BRAND_COLORS.primary }} />
                 </Box>
               </Box>
 
@@ -244,7 +261,7 @@ export default function Home() {
                         background: 'transparent',
                       },
                       '&::-webkit-scrollbar-thumb': {
-                        background: '#CBD5E1',
+                        background: `${BRAND_COLORS.primary}40`,
                         borderRadius: '4px',
                       }
                     }}
@@ -256,27 +273,27 @@ export default function Home() {
                         sx={{
                           cursor: 'pointer',
                           p: 2,
-                          backgroundColor: 'white',
+                          backgroundColor: BRAND_COLORS.background.white,
                           borderRadius: 2,
-                          border: '1px solid rgba(203, 213, 225, 0.5)',
+                          border: `1px solid ${BRAND_COLORS.primary}15`,
                           transition: 'all 0.2s ease',
                           '&:hover': {
                             transform: 'translateY(-2px)',
-                            boxShadow: '0 4px 15px rgba(74, 108, 247, 0.1)',
-                            borderColor: '#4A6CF7'
+                            boxShadow: `0 4px 15px ${BRAND_COLORS.primary}15`,
+                            borderColor: BRAND_COLORS.primary
                           }
                         }}
                       >
-                        <Typography sx={{ color: '#1B2559' }}>
+                        <Typography sx={{ color: BRAND_COLORS.text.primary }}>
                           {prompt.text.split(prompt.highlighted).map((part, i, arr) => (
                             <span key={i}>
                               {part}
                               {i < arr.length - 1 && (
                                 <span style={{ 
-                                  backgroundColor: 'rgba(74, 108, 247, 0.1)',
+                                  backgroundColor: `${BRAND_COLORS.primary}10`,
                                   padding: '2px 6px',
                                   borderRadius: '4px',
-                                  color: '#4A6CF7',
+                                  color: BRAND_COLORS.primary,
                                   fontWeight: 500
                                 }}>
                                   {prompt.highlighted}
@@ -292,8 +309,8 @@ export default function Home() {
 
                 <Box sx={{ 
                   p: 2, 
-                  borderTop: '1px solid rgba(0, 0, 0, 0.06)',
-                  backgroundColor: '#ffffff',
+                  borderTop: `1px solid ${BRAND_COLORS.primary}15`,
+                  backgroundColor: BRAND_COLORS.background.white,
                   position: 'absolute',
                   bottom: 0,
                   left: 0,
@@ -318,7 +335,7 @@ export default function Home() {
                           <ArrowForward 
                             sx={{ 
                               cursor: 'pointer', 
-                              color: customPrompt.trim() ? '#4A6CF7' : '#CBD5E1',
+                              color: customPrompt.trim() ? BRAND_COLORS.primary : `${BRAND_COLORS.text.secondary}40`,
                               transition: 'color 0.2s ease'
                             }}
                             onClick={handleCustomPromptSubmit}
@@ -326,16 +343,16 @@ export default function Home() {
                         </InputAdornment>
                       ),
                       sx: {
-                        backgroundColor: 'white',
+                        backgroundColor: BRAND_COLORS.background.white,
                         '& fieldset': {
-                          borderColor: 'rgba(203, 213, 225, 0.5)',
+                          borderColor: `${BRAND_COLORS.primary}15`,
                           transition: 'border-color 0.2s ease'
                         },
                         '&:hover fieldset': {
-                          borderColor: '#4A6CF7 !important',
+                          borderColor: `${BRAND_COLORS.primary} !important`,
                         },
                         '&.Mui-focused fieldset': {
-                          borderColor: '#4A6CF7 !important',
+                          borderColor: `${BRAND_COLORS.primary} !important`,
                           borderWidth: '1px !important'
                         }
                       }
