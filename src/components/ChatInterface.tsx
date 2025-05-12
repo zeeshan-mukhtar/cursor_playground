@@ -25,6 +25,7 @@ interface SamplePrompt {
 
 interface ChatInterfaceProps {
   samplePrompts: SamplePrompt[];
+  responses: Record<string, string>;
   messages: Message[];
   input: string;
   setMessages: (messages: Message[]) => void;
@@ -33,26 +34,10 @@ interface ChatInterfaceProps {
   setIsLoading: (loading: boolean) => void;
 }
 
-export default function ChatInterface({ samplePrompts, messages, input, setMessages, setInput, isLoading, setIsLoading }: ChatInterfaceProps) {
+export default function ChatInterface({ samplePrompts, responses, messages, input, setMessages, setInput, isLoading, setIsLoading }: ChatInterfaceProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputWidth, setInputWidth] = React.useState<number | undefined>(undefined);
-
-  // Map each sample prompt to a specific response
-  const promptResponses: Record<string, string> = {
-    "My Azure AD password is about to expire. Can you help with resetting it?":
-      "Your Azure AD password can be reset by visiting the password reset portal. Would you like a direct link or step-by-step instructions?",
-    "I'm locked out of my Azure account. How can I regain access?":
-      "If you're locked out, you can unlock your account using the self-service portal or by contacting your admin. Would you like to start the unlock process?",
-    "Need to enable Multi-Factor Authentication for my Azure AD account":
-      "To enable MFA, go to your account security settings. Would you like a guide on setting up MFA?",
-    "How do I update my Azure AD security questions?":
-      "You can update your security questions in your account profile under security info. Would you like a direct link?",
-    "Can't sign in to Microsoft 365 with my Azure AD credentials":
-      "If you can't sign in, try resetting your password or check if your account is locked. Would you like help with either?",
-    "Need to sync my on-premise password with Azure AD":
-      "To sync your on-premise password, ensure your organization has password writeback enabled. Would you like troubleshooting steps?",
-  };
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -70,7 +55,7 @@ export default function ChatInterface({ samplePrompts, messages, input, setMessa
     try {
       // Use mapped response if input matches a sample prompt, else default
       const botText =
-        promptResponses[input.trim()] ||
+        responses[input.trim()] ||
         "I'll help you reset your password. Please verify your identity first. Would you like to receive a verification code via email or phone?";
 
       const botResponse: Message = {
