@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import {
   Box,
   TextField,
@@ -25,15 +25,18 @@ interface SamplePrompt {
 
 interface ChatInterfaceProps {
   samplePrompts: SamplePrompt[];
+  messages: Message[];
+  input: string;
+  setMessages: (messages: Message[]) => void;
+  setInput: (input: string) => void;
+  isLoading: boolean;
+  setIsLoading: (loading: boolean) => void;
 }
 
-export default function ChatInterface({ samplePrompts }: ChatInterfaceProps) {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+export default function ChatInterface({ samplePrompts, messages, input, setMessages, setInput, isLoading, setIsLoading }: ChatInterfaceProps) {
+  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [inputWidth, setInputWidth] = useState<number | undefined>(undefined);
+  const [inputWidth, setInputWidth] = React.useState<number | undefined>(undefined);
 
   // Map each sample prompt to a specific response
   const promptResponses: Record<string, string> = {
@@ -60,7 +63,7 @@ export default function ChatInterface({ samplePrompts }: ChatInterfaceProps) {
       timestamp: new Date(),
     };
 
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages([...messages, userMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -77,7 +80,7 @@ export default function ChatInterface({ samplePrompts }: ChatInterfaceProps) {
       };
 
       setTimeout(() => {
-        setMessages((prev) => [...prev, botResponse]);
+        setMessages([...messages, userMessage, botResponse]);
         setIsLoading(false);
       }, 700);
     } catch (error) {

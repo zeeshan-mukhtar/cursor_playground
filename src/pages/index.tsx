@@ -1,8 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Box, Container, Typography, Paper, List, ListItem, ListItemIcon, ListItemText, IconButton, Collapse } from '@mui/material';
 import { LockReset, Help, SmartToy, Security, ExpandMore, ExpandLess } from '@mui/icons-material';
 import ChatInterface from '../components/ChatInterface';
 import Sidebar from '../components/Sidebar';
+import UnlockAccount from '../components/UnlockAccount';
+import RequestSoftware from '../components/RequestSoftware';
+import GroupManagement from '../components/GroupManagement';
+import UserProvisioning from '../components/UserProvisioning';
+import AppRegistration from '../components/AppRegistration';
+import AuditLogs from '../components/AuditLogs';
+import GetHelp from '../components/GetHelp';
 
 // Royal iTech brand colors
 const BRAND_COLORS = {
@@ -19,9 +26,113 @@ const BRAND_COLORS = {
   }
 };
 
+const workflowInfoCards: Record<string, JSX.Element> = {
+  'password-reset': (
+    <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 5px 20px rgba(0,0,0,0.05)', border: `1px solid ${BRAND_COLORS.primary}15`, mb: 2 }}>
+      <Typography variant="h5" sx={{ fontWeight: 600, mb: 1 }}>
+        Reset Password
+      </Typography>
+      <Typography variant="body1" paragraph sx={{ color: BRAND_COLORS.text.secondary, mb: 3 }}>
+        Having issues with your Azure Active Directory account? I'm here to help you with password management, security settings, and account access.
+      </Typography>
+      <List sx={{ '& .MuiListItem-root': { px: 2, py: 1.5 } }}>
+        <ListItem>
+          <ListItemIcon>
+            <LockReset sx={{ color: BRAND_COLORS.primary }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Password Management"
+            secondary="Reset, update, or sync your Azure AD password"
+            primaryTypographyProps={{ fontWeight: 500, color: BRAND_COLORS.text.primary }}
+            secondaryTypographyProps={{ color: BRAND_COLORS.text.secondary }}
+          />
+        </ListItem>
+        <ListItem>
+          <ListItemIcon>
+            <Help sx={{ color: BRAND_COLORS.primary }} />
+          </ListItemIcon>
+          <ListItemText
+            primary="Account Security"
+            secondary="MFA setup, security questions, and account recovery"
+            primaryTypographyProps={{ fontWeight: 500, color: BRAND_COLORS.text.primary }}
+            secondaryTypographyProps={{ color: BRAND_COLORS.text.secondary }}
+          />
+        </ListItem>
+      </List>
+    </Paper>
+  ),
+  'account-unlock': <UnlockAccount />,
+  'software-access': <RequestSoftware />,
+  'group-management': <GroupManagement />,
+  'user-provisioning': <UserProvisioning />,
+  'app-registration': <AppRegistration />,
+  'audit-logs': <AuditLogs />,
+  'help-support': <GetHelp />,
+};
+
 export default function Home() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<string>('password-reset');
-  const [showInfo, setShowInfo] = useState(true);
+  const [chatStates, setChatStates] = useState<Record<string, { messages: any[]; input: string; isLoading: boolean }>>({});
+  const prevWorkflow = useRef(selectedWorkflow);
+  const [showInfo, setShowInfo] = useState(false); // collapsed by default
+
+  // Ensure state exists for the selected workflow
+  useEffect(() => {
+    setChatStates((prev) => {
+      if (!prev[selectedWorkflow]) {
+        return { ...prev, [selectedWorkflow]: { messages: [], input: '', isLoading: false } };
+      }
+      return prev;
+    });
+  }, [selectedWorkflow]);
+
+  // Reset input and isLoading on workflow change
+  useEffect(() => {
+    if (prevWorkflow.current !== selectedWorkflow) {
+      setChatStates((prev) => ({
+        ...prev,
+        [selectedWorkflow]: {
+          messages: prev[selectedWorkflow]?.messages || [],
+          input: '',
+          isLoading: false,
+        },
+      }));
+      prevWorkflow.current = selectedWorkflow;
+    }
+  }, [selectedWorkflow]);
+
+  // Collapse info card on workflow change
+  useEffect(() => {
+    setShowInfo(false);
+  }, [selectedWorkflow]);
+
+  const setMessages = (messages: any[]) => {
+    setChatStates((prev) => ({
+      ...prev,
+      [selectedWorkflow]: {
+        ...prev[selectedWorkflow],
+        messages,
+      },
+    }));
+  };
+  const setInput = (input: string) => {
+    setChatStates((prev) => ({
+      ...prev,
+      [selectedWorkflow]: {
+        ...prev[selectedWorkflow],
+        input,
+      },
+    }));
+  };
+  const setIsLoading = (isLoading: boolean) => {
+    setChatStates((prev) => ({
+      ...prev,
+      [selectedWorkflow]: {
+        ...prev[selectedWorkflow],
+        isLoading,
+      },
+    }));
+  };
 
   const samplePrompts = [
     {
@@ -50,6 +161,8 @@ export default function Home() {
     }
   ];
 
+  const chatState = chatStates[selectedWorkflow] || { messages: [], input: '', isLoading: false };
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: BRAND_COLORS.background.light }}>
       <Sidebar selectedWorkflow={selectedWorkflow} setSelectedWorkflow={setSelectedWorkflow} />
@@ -61,12 +174,11 @@ export default function Home() {
               AI Agentic Assistant
             </Typography>
           </Box>
-
-          {/* Toggleable Info Card */}
+          {/* Toggleable Info Card for all workflows */}
           <Box sx={{ mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, color: BRAND_COLORS.text.primary, mr: 1 }}>
-                Azure AD Assistant
+                {selectedWorkflow.charAt(0).toUpperCase() + selectedWorkflow.slice(1)}
               </Typography>
               <IconButton onClick={() => setShowInfo((prev) => !prev)} size="small" sx={{ ml: 0.5 }}>
                 {showInfo ? <ExpandLess /> : <ExpandMore />}
@@ -76,41 +188,20 @@ export default function Home() {
               </Typography>
             </Box>
             <Collapse in={showInfo} timeout="auto" unmountOnExit>
-              <Paper sx={{ p: 3, borderRadius: 2, boxShadow: '0 5px 20px rgba(0,0,0,0.05)', border: `1px solid ${BRAND_COLORS.primary}15`, mb: 2 }}>
-                <Typography variant="body1" paragraph sx={{ color: BRAND_COLORS.text.secondary, mb: 3 }}>
-                  Having issues with your Azure Active Directory account? I'm here to help you with password management, security settings, and account access.
-                </Typography>
-                <List sx={{ '& .MuiListItem-root': { px: 2, py: 1.5 } }}>
-                  <ListItem>
-                    <ListItemIcon>
-                      <LockReset sx={{ color: BRAND_COLORS.primary }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Password Management"
-                      secondary="Reset, update, or sync your Azure AD password"
-                      primaryTypographyProps={{ fontWeight: 500, color: BRAND_COLORS.text.primary }}
-                      secondaryTypographyProps={{ color: BRAND_COLORS.text.secondary }}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemIcon>
-                      <Help sx={{ color: BRAND_COLORS.primary }} />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary="Account Security"
-                      secondary="MFA setup, security questions, and account recovery"
-                      primaryTypographyProps={{ fontWeight: 500, color: BRAND_COLORS.text.primary }}
-                      secondaryTypographyProps={{ color: BRAND_COLORS.text.secondary }}
-                    />
-                  </ListItem>
-                </List>
-              </Paper>
+              {workflowInfoCards[selectedWorkflow]}
             </Collapse>
           </Box>
-
           {/* Chat area is always full width */}
           <Box>
-            <ChatInterface samplePrompts={samplePrompts} />
+            <ChatInterface
+              samplePrompts={samplePrompts}
+              messages={chatState.messages}
+              input={chatState.input}
+              setMessages={setMessages}
+              setInput={setInput}
+              isLoading={chatState.isLoading}
+              setIsLoading={setIsLoading}
+            />
           </Box>
         </Container>
       </Box>

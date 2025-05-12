@@ -26,6 +26,10 @@ const workflows = [
   { id: 'password-reset', name: 'Reset Password', icon: <LockReset /> },
   { id: 'account-unlock', name: 'Unlock Account', icon: <AccountCircle /> },
   { id: 'software-access', name: 'Request Software', icon: <BusinessCenter /> },
+  { id: 'group-management', name: 'Group Management', icon: <BusinessCenter /> },
+  { id: 'user-provisioning', name: 'User Provisioning', icon: <AccountCircle /> },
+  { id: 'app-registration', name: 'App Registration', icon: <BusinessCenter /> },
+  { id: 'audit-logs', name: 'Audit Logs', icon: <Help /> },
   { id: 'help-support', name: 'Get Help', icon: <Help /> },
 ];
 
