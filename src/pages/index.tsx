@@ -172,6 +172,16 @@ const workflowInfoContent: Record<string, { heading: string; description: string
       'Browse HR FAQs and policies',
     ],
   },
+  'resource-onboarding': {
+    heading: '🚀 Try it yourself!',
+    description: "Suppose you need to onboard a new employee or contractor. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Initiate onboarding for a new resource',
+      'Track onboarding progress and tasks',
+      'Get a checklist of required documents',
+      'Send welcome emails and assign a buddy',
+    ],
+  },
 };
 
 // Define workflow-specific sample prompts and AI-style responses
@@ -335,6 +345,24 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
         "HR policies are available in the HR portal under 'Policies' or 'Resources.'\nLet me know if you need a specific policy or a summary of the most important ones.",
     }
   },
+  'resource-onboarding': {
+    prompts: [
+      { text: "How do I start onboarding a new employee?", highlighted: "onboarding a new employee" },
+      { text: "What documents are needed for onboarding?", highlighted: "documents are needed" },
+      { text: "How can I track onboarding progress?", highlighted: "track onboarding progress" },
+      { text: "Can I send a welcome email automatically?", highlighted: "send a welcome email" },
+    ],
+    responses: {
+      "How do I start onboarding a new employee?":
+        "To start onboarding a new employee, go to the Resource Onboarding section and fill out the new hire form with their details.\nWould you like a step-by-step guide or a checklist of what's required?",
+      "What documents are needed for onboarding?":
+        "Typically, you'll need identification, tax forms, signed offer letter, and bank details.\nI can provide a full checklist or help you upload documents if needed.",
+      "How can I track onboarding progress?":
+        "You can track onboarding progress in the Onboarding Dashboard, which shows completed and pending tasks for each new resource.\nWould you like to see an example dashboard or get notifications for key milestones?",
+      "Can I send a welcome email automatically?":
+        "Yes! You can set up an automated welcome email as part of the onboarding workflow.\nWould you like a sample welcome email template or help configuring the automation?",
+    }
+  },
 };
 
 // Get heading for toggle button and card
@@ -350,6 +378,7 @@ const workflowHeadings: Record<string, string> = {
   'leave-request': 'Leave Request',
   'payslip-download': 'Payslip Download',
   'update-personal-info': 'Update Personal Info',
+  'resource-onboarding': 'Resource Onboarding',
   'hr-helpdesk': 'HR Helpdesk',
 };
 

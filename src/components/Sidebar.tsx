@@ -46,6 +46,7 @@ const HRWorkflows = [
   { id: 'leave-request', name: 'Leave Request', icon: <AssignmentInd /> },
   { id: 'payslip-download', name: 'Payslip Download', icon: <Description /> },
   { id: 'update-personal-info', name: 'Update Personal Info', icon: <Info /> },
+  { id: 'resource-onboarding', name: 'Resource Onboarding', icon: <AssignmentInd /> },
   { id: 'hr-helpdesk', name: 'HR Helpdesk', icon: <SupportAgent /> },
 ];
 
