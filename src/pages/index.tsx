@@ -136,6 +136,42 @@ const workflowInfoContent: Record<string, { heading: string; description: string
       'Access Azure AD documentation',
     ],
   },
+  'leave-request': {
+    heading: '🗓️ Try it yourself!',
+    description: "Imagine you need to take a day off. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Submit a leave request',
+      'Check your leave balance',
+      'Track approval status',
+    ],
+  },
+  'payslip-download': {
+    heading: '💵 Try it yourself!',
+    description: "Suppose you want to access your latest payslip. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Download your latest payslip',
+      'View payslip history',
+      'Get help understanding your payslip',
+    ],
+  },
+  'update-personal-info': {
+    heading: '📝 Try it yourself!',
+    description: "Need to update your contact details? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Update address, phone, or emergency contact',
+      'Change bank account details',
+      'Review your personal information',
+    ],
+  },
+  'hr-helpdesk': {
+    heading: '🙋 Try it yourself!',
+    description: "Have an HR question or issue? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Contact HR support',
+      'Submit an HR query or ticket',
+      'Browse HR FAQs and policies',
+    ],
+  },
 };
 
 // Define workflow-specific sample prompts and AI-style responses
@@ -239,6 +275,66 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
         "You can find official Azure AD documentation on the Microsoft Docs website.\nWould you like a direct link or help finding documentation for a specific feature?",
     }
   },
+  'leave-request': {
+    prompts: [
+      { text: "How do I apply for leave?", highlighted: "apply for leave" },
+      { text: "Can I check my leave balance?", highlighted: "leave balance" },
+      { text: "How do I track my leave approval?", highlighted: "track my leave approval" },
+    ],
+    responses: {
+      "How do I apply for leave?":
+        "Absolutely! To apply for leave, go to the Leave Request section, select your leave type and dates, and submit your request.\nWould you like a step-by-step guide or a direct link to the leave form?",
+      "Can I check my leave balance?":
+        "Yes, you can check your leave balance in your HR portal under 'Leave Balance' or 'My Profile.'\nLet me know if you need help finding this section or understanding your balance.",
+      "How do I track my leave approval?":
+        "You can track your leave approval status in the Leave Request history or notifications area.\nWould you like to receive updates or reminders about your leave requests?",
+    }
+  },
+  'payslip-download': {
+    prompts: [
+      { text: "How do I download my latest payslip?", highlighted: "download my latest payslip" },
+      { text: "Can I view my payslip history?", highlighted: "payslip history" },
+      { text: "What if I can't open my payslip?", highlighted: "can't open my payslip" },
+    ],
+    responses: {
+      "How do I download my latest payslip?":
+        "To download your latest payslip, go to the Payslip section in your HR portal and click on the most recent payslip.\nWould you like a direct link or help with the download process?",
+      "Can I view my payslip history?":
+        "Yes, you can view your payslip history in the same section.\nYou'll see a list of all your previous payslips, which you can download or print as needed.",
+      "What if I can't open my payslip?":
+        "If you're having trouble opening your payslip, make sure you have a PDF reader installed.\nIf the issue persists, let me know and I can help troubleshoot or connect you with HR support.",
+    }
+  },
+  'update-personal-info': {
+    prompts: [
+      { text: "How do I update my address?", highlighted: "update my address" },
+      { text: "Can I change my bank account details?", highlighted: "change my bank account details" },
+      { text: "How do I review my personal info?", highlighted: "review my personal info" },
+    ],
+    responses: {
+      "How do I update my address?":
+        "To update your address, go to the Personal Info section in your HR portal and edit your address details.\nWould you like a step-by-step guide or help with submitting the change?",
+      "Can I change my bank account details?":
+        "Yes, you can change your bank account details in the Payroll or Personal Info section.\nLet me know if you need help finding the right form or want to know about approval timelines.",
+      "How do I review my personal info?":
+        "You can review all your personal information in the HR portal under 'My Profile' or 'Personal Info.'\nWould you like to check for any outdated details or get a summary of your current info?",
+    }
+  },
+  'hr-helpdesk': {
+    prompts: [
+      { text: "How do I contact HR support?", highlighted: "contact HR support" },
+      { text: "Can I submit an HR query?", highlighted: "submit an HR query" },
+      { text: "Where can I find HR policies?", highlighted: "find HR policies" },
+    ],
+    responses: {
+      "How do I contact HR support?":
+        "You can contact HR support by submitting a ticket in the HR Helpdesk section or by calling the HR helpline.\nWould you like a direct link or the contact number?",
+      "Can I submit an HR query?":
+        "Yes, you can submit any HR-related query through the HR Helpdesk.\nJust fill out the query form and HR will get back to you as soon as possible.",
+      "Where can I find HR policies?":
+        "HR policies are available in the HR portal under 'Policies' or 'Resources.'\nLet me know if you need a specific policy or a summary of the most important ones.",
+    }
+  },
 };
 
 // Get heading for toggle button and card
@@ -251,6 +347,10 @@ const workflowHeadings: Record<string, string> = {
   'app-registration': 'App Registration',
   'audit-logs': 'Audit Logs',
   'help-support': 'Get Help',
+  'leave-request': 'Leave Request',
+  'payslip-download': 'Payslip Download',
+  'update-personal-info': 'Update Personal Info',
+  'hr-helpdesk': 'HR Helpdesk',
 };
 
 export default function Home() {
