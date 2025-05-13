@@ -70,7 +70,7 @@ const workflowInfoCards: Record<string, JSX.Element> = {
   'help-support': <GetHelp />,
 };
 
-// Define workflow-specific sample prompts and responses
+// Define workflow-specific sample prompts and AI-style responses
 const workflowPrompts: Record<string, { prompts: { text: string; highlighted: string }[]; responses: Record<string, string> }> = {
   'password-reset': {
     prompts: [
@@ -79,9 +79,12 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "How do I change my password?", highlighted: "change my password" },
     ],
     responses: {
-      "How do I reset my Azure AD password?": "To reset your Azure AD password, go to the password reset portal and follow the instructions. If you need a direct link, let me know!",
-      "My password expired, what should I do?": "If your password expired, you can reset it using the self-service password reset portal. Would you like step-by-step instructions?",
-      "How do I change my password?": "You can change your password from your account settings or by using the Ctrl+Alt+Del shortcut on a Windows machine.",
+      "How do I reset my Azure AD password?":
+        "Of course! To reset your Azure AD password, please follow these steps:\n1. Go to the official Azure AD password reset portal.\n2. Enter your user ID (usually your email address).\n3. Follow the on-screen instructions to verify your identity and set a new password.\nIf you run into any issues, such as not receiving a verification code, let me know and I can help troubleshoot. Would you like a direct link to the portal or more detailed guidance?",
+      "My password expired, what should I do?":
+        "No worries! If your password has expired, you can reset it using the self-service password reset portal.\nJust visit the portal, enter your user ID, and follow the prompts to verify your identity. If you need help with any step, or if you're unable to reset your password, let me know and I'll walk you through it.",
+      "How do I change my password?":
+        "Changing your password is easy! You can do it from your account settings or, if you're on a Windows device, by pressing Ctrl+Alt+Del and selecting 'Change a password.'\nWould you like step-by-step instructions for your device or operating system?",
     }
   },
   'account-unlock': {
@@ -90,8 +93,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "I'm locked out, can you help?", highlighted: "locked out" },
     ],
     responses: {
-      "How do I unlock my Azure AD account?": "To unlock your Azure AD account, visit the unlock portal or use the self-service option. Would you like a direct link?",
-      "I'm locked out, can you help?": "If you're locked out, you can unlock your account using the self-service portal or by contacting your admin.",
+      "How do I unlock my Azure AD account?":
+        "I can help you unlock your Azure AD account!\n1. Go to the Azure AD account unlock portal.\n2. Enter your user ID and follow the instructions to verify your identity.\n3. Once verified, you'll be able to unlock your account and regain access.\nIf you need a direct link or run into any issues, just let me know!",
+      "I'm locked out, can you help?":
+        "I'm here to help! If you're locked out, you can use the self-service unlock option or contact your IT administrator.\nWould you like to try unlocking your account yourself, or do you need help contacting support?",
     }
   },
   'software-access': {
@@ -100,8 +105,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "Can I get access to Power BI?", highlighted: "access to Power BI" },
     ],
     responses: {
-      "How do I request access to Microsoft Teams?": "To request access to Microsoft Teams, please fill out the software request form or contact your IT admin.",
-      "Can I get access to Power BI?": "You can request access to Power BI through the application catalog or by submitting a request to your IT department.",
+      "How do I request access to Microsoft Teams?":
+        "To request access to Microsoft Teams, you can usually submit a request through your organization's software portal or contact your IT department.\nWould you like me to guide you through the request process or provide a direct link to the portal?",
+      "Can I get access to Power BI?":
+        "Absolutely! Access to Power BI is typically managed by your IT team.\nYou can request access via the application catalog or by submitting a ticket.\nLet me know if you'd like step-by-step instructions or help with the request form.",
     }
   },
   'group-management': {
@@ -110,8 +117,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "How can I see all members of a group?", highlighted: "see all members of a group" },
     ],
     responses: {
-      "How do I add a user to a group?": "To add a user to a group, go to Azure AD Groups, select the group, and add the user under Members.",
-      "How can I see all members of a group?": "You can view all group members by navigating to the group in Azure AD and selecting the Members tab.",
+      "How do I add a user to a group?":
+        "To add a user to a group in Azure AD:\n1. Go to Azure AD > Groups.\n2. Select the group you want to manage.\n3. Click on 'Members' and then 'Add members.'\n4. Search for the user and add them.\nWould you like screenshots or a video guide?",
+      "How can I see all members of a group?":
+        "You can view all members by navigating to the group in Azure AD and selecting the 'Members' tab.\nIf you need a list exported or filtered by role, let me know!",
     }
   },
   'user-provisioning': {
@@ -120,8 +129,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "How do I assign a role to a user?", highlighted: "assign a role to a user" },
     ],
     responses: {
-      "How do I create a new user in Azure AD?": "To create a new user, go to Azure AD > Users > New user, and fill in the required details.",
-      "How do I assign a role to a user?": "Assign a role by selecting the user in Azure AD, then choosing Roles and adding the appropriate role.",
+      "How do I create a new user in Azure AD?":
+        "To create a new user:\n1. Go to Azure AD > Users > New user.\n2. Fill in the required details (name, username, etc.).\n3. Assign roles or groups as needed.\nWould you like a detailed walkthrough or help with bulk user creation?",
+      "How do I assign a role to a user?":
+        "Assigning a role is simple:\n1. Select the user in Azure AD.\n2. Go to 'Assigned roles' and click 'Add assignment.'\n3. Choose the appropriate role and confirm.\nLet me know if you need a list of available roles or best practices for role assignment!",
     }
   },
   'app-registration': {
@@ -130,8 +141,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "How do I configure permissions for an app?", highlighted: "configure permissions for an app" },
     ],
     responses: {
-      "How do I register a new app in Azure AD?": "Go to Azure AD > App registrations > New registration, and follow the prompts to register your app.",
-      "How do I configure permissions for an app?": "Configure app permissions by selecting the app registration and navigating to API permissions.",
+      "How do I register a new app in Azure AD?":
+        "To register a new app:\n1. Go to Azure AD > App registrations > New registration.\n2. Enter the app name and redirect URI.\n3. Click 'Register' and configure settings as needed.\nWould you like help with authentication setup or API permissions?",
+      "How do I configure permissions for an app?":
+        "You can configure permissions by:\n1. Selecting the app registration.\n2. Navigating to 'API permissions.'\n3. Adding the required permissions and granting admin consent if needed.\nLet me know if you need help with specific APIs or permission types!",
     }
   },
   'audit-logs': {
@@ -140,8 +153,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "Can I export audit logs?", highlighted: "export audit logs" },
     ],
     responses: {
-      "How do I view Azure AD audit logs?": "To view audit logs, go to Azure AD > Audit logs. You can filter and search logs as needed.",
-      "Can I export audit logs?": "Yes, you can export audit logs to CSV from the Azure portal's Audit logs section.",
+      "How do I view Azure AD audit logs?":
+        "To view audit logs:\n1. Go to Azure AD > Audit logs.\n2. Use the filters to find specific events or users.\n3. Click on any log entry for more details.\nIf you need help interpreting the logs or troubleshooting an event, just ask!",
+      "Can I export audit logs?":
+        "Yes, you can export audit logs to CSV directly from the Azure portal's Audit logs section.\nWould you like step-by-step export instructions or help with log analysis?",
     }
   },
   'help-support': {
@@ -150,8 +165,10 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "Where can I find Azure AD documentation?", highlighted: "Azure AD documentation" },
     ],
     responses: {
-      "How do I contact support?": "You can contact support by submitting a ticket through the help portal or calling the IT helpdesk.",
-      "Where can I find Azure AD documentation?": "Official Azure AD documentation is available on the Microsoft Docs website.",
+      "How do I contact support?":
+        "You can contact support by submitting a ticket through your organization's help portal or by calling the IT helpdesk.\nIf you need urgent assistance, let me know and I can provide escalation steps or direct contact info.",
+      "Where can I find Azure AD documentation?":
+        "You can find official Azure AD documentation on the Microsoft Docs website.\nWould you like a direct link or help finding documentation for a specific feature?",
     }
   },
 };
