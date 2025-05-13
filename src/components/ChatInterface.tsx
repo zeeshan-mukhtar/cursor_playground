@@ -67,7 +67,7 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
       setTimeout(() => {
         setMessages([...messages, userMessage, botResponse]);
         setIsLoading(false);
-      }, 700);
+      }, 2000);
     } catch (error) {
       console.error('Error processing message:', error);
       setIsLoading(false);
