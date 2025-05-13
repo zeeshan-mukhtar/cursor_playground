@@ -246,12 +246,7 @@ export default function Home() {
       <Sidebar selectedWorkflow={selectedWorkflow} setSelectedWorkflow={setSelectedWorkflow} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Container maxWidth="lg">
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 2, pt: 2 }}>
-            <SmartToy sx={{ fontSize: 40, color: BRAND_COLORS.primary }} />
-            <Typography variant="h4" sx={{ fontWeight: 600, background: `linear-gradient(135deg, ${BRAND_COLORS.primary} 0%, ${BRAND_COLORS.secondary} 100%)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              AI Agentic Assistant
-            </Typography>
-          </Box>
+          {/* Removed logo and heading from the middle section */}
           {/* Toggleable Info Card for all workflows */}
           <Box sx={{ mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>

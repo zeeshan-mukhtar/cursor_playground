@@ -48,7 +48,7 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
     >
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" noWrap component="div">
-          AI Agentic Assistant
+          RC Agentic AI Playground
         </Typography>
       </Box>
       
