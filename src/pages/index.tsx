@@ -70,6 +70,74 @@ const workflowInfoCards: Record<string, JSX.Element> = {
   'help-support': <GetHelp />,
 };
 
+// Info card content for each workflow
+const workflowInfoContent: Record<string, { heading: string; description: string; bullets: string[] }> = {
+  'password-reset': {
+    heading: '✨ Try it yourself!',
+    description: "Imagine that your Azure AD password is about to expire. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Receive password expiry notification',
+      'Ask for password reset',
+    ],
+  },
+  'account-unlock': {
+    heading: '🔓 Try it yourself!',
+    description: "Suppose you're locked out of your Azure AD account. Here's how RC Agentic AI Playground can help:",
+    bullets: [
+      'Unlock your Azure AD account',
+      'Get step-by-step recovery guidance',
+    ],
+  },
+  'software-access': {
+    heading: '💻 Try it yourself!',
+    description: "Need access to a new application? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Request access to Microsoft Teams, Power BI, and more',
+      'Track your software access requests',
+    ],
+  },
+  'group-management': {
+    heading: '👥 Try it yourself!',
+    description: "Imagine you need to manage Azure AD groups. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Add or remove users from groups',
+      'View and export group membership',
+    ],
+  },
+  'user-provisioning': {
+    heading: '🧑‍💼 Try it yourself!',
+    description: "Suppose you need to onboard a new team member. Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Create new Azure AD users',
+      'Assign roles and permissions',
+    ],
+  },
+  'app-registration': {
+    heading: '🛠️ Try it yourself!',
+    description: "Want to register a new app in Azure AD? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Register new applications',
+      'Configure app permissions and authentication',
+    ],
+  },
+  'audit-logs': {
+    heading: '📊 Try it yourself!',
+    description: "Need to review Azure AD activity? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'View and filter audit logs',
+      'Export logs for analysis',
+    ],
+  },
+  'help-support': {
+    heading: '❓ Try it yourself!',
+    description: "Looking for help or documentation? Here's what you can do with RC Agentic AI Playground:",
+    bullets: [
+      'Contact support or IT helpdesk',
+      'Access Azure AD documentation',
+    ],
+  },
+};
+
 // Define workflow-specific sample prompts and AI-style responses
 const workflowPrompts: Record<string, { prompts: { text: string; highlighted: string }[]; responses: Record<string, string> }> = {
   'password-reset': {
@@ -173,6 +241,18 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
   },
 };
 
+// Get heading for toggle button and card
+const workflowHeadings: Record<string, string> = {
+  'password-reset': 'Reset Password',
+  'account-unlock': 'Unlock Account',
+  'software-access': 'Request Software',
+  'group-management': 'Group Management',
+  'user-provisioning': 'User Provisioning',
+  'app-registration': 'App Registration',
+  'audit-logs': 'Audit Logs',
+  'help-support': 'Get Help',
+};
+
 export default function Home() {
   const [selectedWorkflow, setSelectedWorkflow] = useState<string>('password-reset');
   const [chatStates, setChatStates] = useState<Record<string, { messages: any[]; input: string; isLoading: boolean }>>({});
@@ -246,12 +326,11 @@ export default function Home() {
       <Sidebar selectedWorkflow={selectedWorkflow} setSelectedWorkflow={setSelectedWorkflow} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Container maxWidth="lg">
-          {/* Removed logo and heading from the middle section */}
           {/* Toggleable Info Card for all workflows */}
           <Box sx={{ mb: 2 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
               <Typography variant="h6" sx={{ fontWeight: 600, color: BRAND_COLORS.text.primary, mr: 1 }}>
-                {selectedWorkflow.charAt(0).toUpperCase() + selectedWorkflow.slice(1)}
+                {workflowHeadings[selectedWorkflow]}
               </Typography>
               <IconButton onClick={() => setShowInfo((prev) => !prev)} size="small" sx={{ ml: 0.5 }}>
                 {showInfo ? <ExpandLess /> : <ExpandMore />}
@@ -261,7 +340,19 @@ export default function Home() {
               </Typography>
             </Box>
             <Collapse in={showInfo} timeout="auto" unmountOnExit>
-              {workflowInfoCards[selectedWorkflow]}
+              <Paper sx={{ p: 3, borderRadius: 2, background: 'linear-gradient(90deg, #f5f7fb 60%, #e8eafd 100%)', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', mb: 2 }}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center' }}>
+                  {workflowInfoContent[selectedWorkflow]?.heading}
+                </Typography>
+                <Typography variant="body1" sx={{ color: BRAND_COLORS.text.secondary, mb: 2 }}>
+                  {workflowInfoContent[selectedWorkflow]?.description}
+                </Typography>
+                <ul style={{ margin: 0, paddingLeft: 24 }}>
+                  {workflowInfoContent[selectedWorkflow]?.bullets.map((item, idx) => (
+                    <li key={idx} style={{ color: BRAND_COLORS.text.primary, marginBottom: 4 }}>{item}</li>
+                  ))}
+                </ul>
+              </Paper>
             </Collapse>
           </Box>
           {/* Chat area is always full width */}
