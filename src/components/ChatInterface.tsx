@@ -8,9 +8,10 @@ import {
   CircularProgress,
   InputAdornment,
   Menu,
-  MenuItem
+  MenuItem,
+  Avatar
 } from '@mui/material';
-import { Send, KeyboardArrowDown } from '@mui/icons-material';
+import { Send, KeyboardArrowDown, SmartToy, Person } from '@mui/icons-material';
 
 interface Message {
   text: string;
@@ -34,10 +35,21 @@ interface ChatInterfaceProps {
   setIsLoading: (loading: boolean) => void;
 }
 
+// Sample user personas for demo
+const userPersonas = [
+  { name: 'Alex Johnson', avatar: 'A' },
+  { name: 'Priya Patel', avatar: 'P' },
+  { name: 'Chris Lee', avatar: 'C' },
+];
+const assistantPersona = { name: 'RC Agentic AI', avatar: <SmartToy /> };
+
 export default function ChatInterface({ samplePrompts, responses, messages, input, setMessages, setInput, isLoading, setIsLoading }: ChatInterfaceProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputWidth, setInputWidth] = React.useState<number | undefined>(undefined);
+
+  // Pick a sample user persona for this session
+  const userPersona = React.useMemo(() => userPersonas[Math.floor(Math.random() * userPersonas.length)], []);
 
   const handleSend = async () => {
     if (!input.trim()) return;
@@ -94,30 +106,45 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
   return (
     <Paper sx={{ p: 2, height: '500px', display: 'flex', flexDirection: 'column' }}>
       <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
-        {messages.map((message, index) => (
-          <Box
-            key={index}
-            sx={{
-              display: 'flex',
-              justifyContent: message.isUser ? 'flex-end' : 'flex-start',
-              mb: 1,
-            }}
-          >
-            <Paper
+        {messages.map((message, index) => {
+          const isUser = message.isUser;
+          const senderName = isUser ? userPersona.name : assistantPersona.name;
+          const avatar = isUser ? (
+            <Avatar sx={{ bgcolor: '#1976d2', width: 32, height: 32 }}>{userPersona.avatar}</Avatar>
+          ) : (
+            <Avatar sx={{ bgcolor: '#fff', color: '#1976d2', width: 32, height: 32 }}>{assistantPersona.avatar}</Avatar>
+          );
+          return (
+            <Box
+              key={index}
               sx={{
-                p: 1,
-                backgroundColor: message.isUser ? 'primary.main' : 'grey.100',
-                color: message.isUser ? 'white' : 'text.primary',
-                maxWidth: '70%',
+                display: 'flex',
+                flexDirection: isUser ? 'row-reverse' : 'row',
+                alignItems: 'flex-end',
+                mb: 1,
               }}
             >
-              <Typography variant="body1">{message.text}</Typography>
-              <Typography variant="caption" sx={{ opacity: 0.7 }}>
-                {message.timestamp.toLocaleTimeString()}
-              </Typography>
-            </Paper>
-          </Box>
-        ))}
+              {avatar}
+              <Box sx={{ ml: isUser ? 0 : 1, mr: isUser ? 1 : 0, maxWidth: '70%' }}>
+                <Paper
+                  sx={{
+                    p: 1,
+                    backgroundColor: isUser ? 'primary.main' : 'grey.100',
+                    color: isUser ? 'white' : 'text.primary',
+                  }}
+                >
+                  <Typography variant="caption" sx={{ fontWeight: 600, opacity: 0.8, display: 'block', mb: 0.5 }}>
+                    {senderName}
+                  </Typography>
+                  <Typography variant="body1">{message.text}</Typography>
+                  <Typography variant="caption" sx={{ opacity: 0.7 }}>
+                    {message.timestamp.toLocaleTimeString()}
+                  </Typography>
+                </Paper>
+              </Box>
+            </Box>
+          );
+        })}
         {isLoading && (
           <Box sx={{ display: 'flex', justifyContent: 'flex-start', mb: 1 }}>
             <CircularProgress size={20} />
