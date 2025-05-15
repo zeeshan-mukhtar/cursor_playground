@@ -84,6 +84,7 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
   const [pendingActions, setPendingActions] = React.useState<string[]>([]);
   const [pendingMessageIdx, setPendingMessageIdx] = React.useState<number | null>(null);
   const prevMessagesRef = React.useRef<Message[]>(messages);
+  const pendingFullBotText = React.useRef<string | null>(null);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
 
   // Pick a sample user persona for this session
@@ -114,6 +115,7 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
         "I'll help you reset your password. Please verify your identity first. Would you like to receive a verification code via email or phone?";
       // If it's a multi-step response, use step-by-step rendering
       if (botText.includes('**1.**')) {
+        pendingFullBotText.current = botText;
         const { steps, actions } = parseAssistantResponse(botText);
         setPendingSteps(steps);
         setPendingActions(actions);
@@ -152,15 +154,23 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
       const newMessages = [...prevMessagesRef.current];
       // Only update if the placeholder bot message exists
       if (newMessages[pendingMessageIdx]) {
-        newMessages[pendingMessageIdx] = {
-          ...newMessages[pendingMessageIdx],
-          text: displayedSteps.join('\n\n---\n\n'),
-        };
+        // If reveal is complete, store the original full response string (with [Button]s)
+        if (displayedSteps.length === pendingSteps.length && pendingFullBotText.current) {
+          newMessages[pendingMessageIdx] = {
+            ...newMessages[pendingMessageIdx],
+            text: pendingFullBotText.current,
+          };
+        } else {
+          newMessages[pendingMessageIdx] = {
+            ...newMessages[pendingMessageIdx],
+            text: displayedSteps.join('\n\n---\n\n'),
+          };
+        }
         setMessages(newMessages);
         prevMessagesRef.current = newMessages;
       }
     }
-    // When all steps are revealed, reset pending state
+    // When all steps are revealed, reset pending state (but do NOT overwrite the message text)
     if (
       pendingMessageIdx !== null &&
       displayedSteps.length === pendingSteps.length &&
@@ -171,18 +181,67 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
         setDisplayedSteps([]);
         setPendingActions([]);
         setPendingMessageIdx(null);
+        pendingFullBotText.current = null;
       }, 100);
     }
   }, [displayedSteps, pendingSteps, pendingMessageIdx, setMessages]);
 
   // Handler for action button clicks (for demo, just add a message)
   const handleActionClick = (action: string) => {
-    setMessages([...messages, {
+    const userMessage = {
       text: action,
       isUser: true,
       timestamp: new Date(),
-    }]);
+    };
+    setMessages([...messages, userMessage]);
     setInput('');
+    setIsLoading(true);
+    // Normalize action text for matching
+    const normalizedAction = action.trim();
+    let botText = responses[normalizedAction];
+    // If not found, try case-insensitive match
+    if (!botText) {
+      const foundKey = Object.keys(responses).find(
+        k => k.trim().toLowerCase() === normalizedAction.toLowerCase()
+      );
+      if (foundKey) botText = responses[foundKey];
+    }
+    // If still not found, use a generic multi-step fallback with buttons
+    if (!botText) {
+      botText =
+        `**1.** You selected: ${action}\n\n---\n\n` +
+        `**2.** This is a sample fallback response for the action button.\n\n---\n\n` +
+        `**3.** Would you like to try another action or return to the main menu?\n\n[Main menu] [Cancel]`;
+    }
+    // If it's a multi-step response, use step-by-step rendering
+    if (botText.includes('**1.**')) {
+      pendingFullBotText.current = botText;
+      const { steps, actions } = parseAssistantResponse(botText);
+      setPendingSteps(steps);
+      setPendingActions(actions);
+      setDisplayedSteps([]);
+      setPendingMessageIdx(messages.length + 1); // index for this bot message
+      prevMessagesRef.current = [...messages, userMessage, {
+        text: '',
+        isUser: false,
+        timestamp: new Date(),
+      }];
+      // Reveal steps one by one
+      setTimeout(() => revealNextStep(steps, setDisplayedSteps, setIsLoading, 0), 1200);
+      // Add a placeholder bot message (will be replaced as steps are revealed)
+      setMessages(prevMessagesRef.current);
+      return;
+    }
+    // Fallback: normal single-message bot response
+    const botResponse = {
+      text: botText,
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setTimeout(() => {
+      setMessages([...messages, userMessage, botResponse]);
+      setIsLoading(false);
+    }, 2000);
   };
 
   const handleMenuOpen = () => {
@@ -246,54 +305,72 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
                     {senderName}
                   </Typography>
                   {/* Step-by-step assistant rendering for both in-progress and history */}
-                  {(isLastAssistant || isMultiStepAssistant) ? (() => {
-                    // Use displayedSteps if in-progress, else parse from message.text
-                    let steps: string[] = [];
-                    let actions: string[] = [];
-                    let totalSteps = 0;
+                  {(() => {
                     if (isLastAssistant) {
-                      steps = displayedSteps;
-                      actions = pendingActions;
-                      totalSteps = pendingSteps.length;
-                    } else if (isMultiStepAssistant) {
-                      const parsed = parseAssistantResponse(message.text);
-                      steps = parsed.steps;
-                      actions = parsed.actions;
-                      // Count total steps by parsing the original message text for '**n.**'
-                      totalSteps = (message.text.match(/\*\*\d+\.\*\*/g) || []).length;
+                      const steps = displayedSteps;
+                      const actions = pendingActions;
+                      const totalSteps = pendingSteps.length;
+                      return (
+                        <Box>
+                          {steps.map((step, i) => (
+                            <Box key={i} sx={{ mb: 3, p: 2, background: '#f5f7fb', borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.07)' }}>
+                              <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: '1.08rem' }}>{step}</Typography>
+                              {i < steps.length - 1 && <Divider sx={{ my: 2, borderBottomWidth: 3, bgcolor: '#4A6CF7' }} />}
+                            </Box>
+                          ))}
+                          {steps.length === totalSteps && actions.length > 0 && (
+                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2, mb: 1 }}>
+                              {actions.map((action, idx) => (
+                                <Button
+                                  key={idx}
+                                  variant="contained"
+                                  color={action.toLowerCase().includes('cancel') ? 'error' : 'primary'}
+                                  size="medium"
+                                  sx={{ fontWeight: 700, px: 3, py: 1, borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.10)' }}
+                                  onClick={() => handleActionClick(action)}
+                                >
+                                  {action}
+                                </Button>
+                              ))}
+                            </Box>
+                          )}
+                        </Box>
+                      );
                     }
-                    return (
-                      <Box>
-                        {steps.map((step, i) => (
-                          <Box key={i} sx={{ mb: 3, p: 2, background: '#f5f7fb', borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.07)' }}>
-                            <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: '1.08rem' }}>{step}</Typography>
-                            {i < steps.length - 1 && <Divider sx={{ my: 2, borderBottomWidth: 3, bgcolor: '#4A6CF7' }} />}
-                          </Box>
-                        ))}
-                        {/* Render action buttons only if all steps are shown */}
-                        {steps.length === totalSteps && actions.length > 0 && (
-                          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2, mb: 1 }}>
-                            {actions.map((action, idx) => (
-                              <Button
-                                key={idx}
-                                variant="contained"
-                                color={action.toLowerCase().includes('cancel') ? 'error' : 'primary'}
-                                size="medium"
-                                sx={{ fontWeight: 700, px: 3, py: 1, borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.10)' }}
-                                onClick={() => handleActionClick(action)}
-                              >
-                                {action}
-                              </Button>
-                            ))}
-                          </Box>
-                        )}
-                      </Box>
-                    );
-                  })() : (
-                    <>
-                      <Typography variant="body1">{message.text}</Typography>
-                    </>
-                  )}
+                    if (isMultiStepAssistant) {
+                      const parsed = parseAssistantResponse(message.text);
+                      const steps = parsed.steps;
+                      const actions = parsed.actions;
+                      const totalSteps = (message.text.match(/\*\*\d+\.\*\*/g) || []).length;
+                      return (
+                        <Box>
+                          {steps.map((step, i) => (
+                            <Box key={i} sx={{ mb: 3, p: 2, background: '#f5f7fb', borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.07)' }}>
+                              <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: '1.08rem' }}>{step}</Typography>
+                              {i < steps.length - 1 && <Divider sx={{ my: 2, borderBottomWidth: 3, bgcolor: '#4A6CF7' }} />}
+                            </Box>
+                          ))}
+                          {steps.length === totalSteps && actions.length > 0 && (
+                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2, mb: 1 }}>
+                              {actions.map((action, idx) => (
+                                <Button
+                                  key={idx}
+                                  variant="contained"
+                                  color={action.toLowerCase().includes('cancel') ? 'error' : 'primary'}
+                                  size="medium"
+                                  sx={{ fontWeight: 700, px: 3, py: 1, borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.10)' }}
+                                  onClick={() => handleActionClick(action)}
+                                >
+                                  {action}
+                                </Button>
+                              ))}
+                            </Box>
+                          )}
+                        </Box>
+                      );
+                    }
+                    return <Typography variant="body1">{message.text}</Typography>;
+                  })()}
                   <Typography variant="caption" sx={{ opacity: 0.7 }}>
                     {message.timestamp.toLocaleTimeString()}
                   </Typography>
