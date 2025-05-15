@@ -194,11 +194,29 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I reset my Azure AD password?":
-        "Of course! To reset your Azure AD password, please follow these steps:\n1. Go to the official Azure AD password reset portal.\n2. Enter your user ID (usually your email address).\n3. Follow the on-screen instructions to verify your identity and set a new password.\nIf you run into any issues, such as not receiving a verification code, let me know and I can help troubleshoot. Would you like a direct link to the portal or more detailed guidance?",
+        "**1.** I see you want to reset your Azure AD password. Let me check your account status and prepare the reset process...\n\n---\n\n" +
+        "**2.** For security, I need to confirm your identity and ensure your account is eligible for a password reset. This helps protect your information.\n\n---\n\n" +
+        "**3.** Please confirm your username and whether you have access to your recovery email or phone. Once confirmed, I'll send you a password reset link.\n\n" +
+        "- **User:** John Doe (john.doe@example.com)\n" +
+        "- **Application:** Azure AD\n" +
+        "- **Reset Portal:** https://portal.example.com/password-reset\n\n" +
+        "👉 **Please confirm** if these details are correct, or let me know if you'd like to edit your request.\n\n" +
+        "[Send reset link] [Edit details] [Cancel]",
       "My password expired, what should I do?":
-        "No worries! If your password has expired, you can reset it using the self-service password reset portal.\nJust visit the portal, enter your user ID, and follow the prompts to verify your identity. If you need help with any step, or if you're unable to reset your password, let me know and I'll walk you through it.",
+        "**1.** Your password has expired. I'll check your account and guide you through the reset process...\n\n---\n\n" +
+        "**2.** Resetting an expired password requires identity verification. This ensures only you can update your credentials.\n\n---\n\n" +
+        "**3.** Please confirm your username and recovery contact. I'll send a reset link once confirmed.\n\n" +
+        "- **User:** John Doe (john.doe@example.com)\n" +
+        "- **Application:** Azure AD\n" +
+        "- **Reset Portal:** https://portal.example.com/password-reset\n\n" +
+        "[Send reset link] [Edit details] [Cancel]",
       "How do I change my password?":
-        "Changing your password is easy! You can do it from your account settings or, if you're on a Windows device, by pressing Ctrl+Alt+Del and selecting 'Change a password.'\nWould you like step-by-step instructions for your device or operating system?",
+        "**1.** You'd like to change your password. Let me check your current status and available options...\n\n---\n\n" +
+        "**2.** Changing your password regularly helps keep your account secure. I'll guide you through the process for your device or platform.\n\n---\n\n" +
+        "**3.** Would you like to change your password via the Azure portal, Windows device, or another method?\n\n" +
+        "- **User:** John Doe (john.doe@example.com)\n" +
+        "- **Portal:** https://portal.example.com/account\n\n" +
+        "[Change via Azure portal] [Change on Windows] [Other method] [Cancel]",
     }
   },
   'account-unlock': {
@@ -208,33 +226,73 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I unlock my Azure AD account?":
-        "I can help you unlock your Azure AD account!\n1. Go to the Azure AD account unlock portal.\n2. Enter your user ID and follow the instructions to verify your identity.\n3. Once verified, you'll be able to unlock your account and regain access.\nIf you need a direct link or run into any issues, just let me know!",
+        "**1.** I see your account is locked. Let me check the reason and available unlock options...\n\n---\n\n" +
+        "**2.** Account locks can happen due to multiple failed sign-ins or security policies. I'll verify your identity before proceeding.\n\n---\n\n" +
+        "**3.** Please confirm your username and if you have access to your recovery contact.\n\n" +
+        "- **User:** John Doe (john.doe@example.com)\n\n" +
+        "👉 **Please confirm** to proceed with unlocking your account, or edit/cancel the request.\n\n" +
+        "[Unlock account] [Edit details] [Cancel]",
       "I'm locked out, can you help?":
-        "I'm here to help! If you're locked out, you can use the self-service unlock option or contact your IT administrator.\nWould you like to try unlocking your account yourself, or do you need help contacting support?",
+        "**1.** You're locked out of your account. I'll check your account status and recovery options...\n\n---\n\n" +
+        "**2.** To unlock your account, I need to verify your identity and check for any security holds.\n\n---\n\n" +
+        "**3.** Please confirm your details to proceed.\n\n" +
+        "- **User:** John Doe (john.doe@example.com)\n\n" +
+        "[Unlock account] [Contact support] [Cancel]",
     }
   },
   'software-access': {
     prompts: [
       { text: "How do I request access to Microsoft Teams?", highlighted: "request access to Microsoft Teams" },
       { text: "Can I get access to Power BI?", highlighted: "access to Power BI" },
+      { text: "Can you give me access to Zoom?", highlighted: "access to Zoom" },
     ],
     responses: {
       "How do I request access to Microsoft Teams?":
-        "To request access to Microsoft Teams, you can usually submit a request through your organization's software portal or contact your IT department.\nWould you like me to guide you through the request process or provide a direct link to the portal?",
+        "**1.** You'd like access to Microsoft Teams. I'll check your current permissions and prepare a request...\n\n---\n\n" +
+        "**2.** I need to confirm you don't already have access and gather your user details for the request.\n\n---\n\n" +
+        "**3.** Please confirm the following details to proceed:\n\n" +
+        "- **App:** Microsoft Teams\n" +
+        "- **User:** John Doe (john.doe@example.com)\n\n" +
+        "👉 **Please confirm** if these details are correct, or edit/cancel the request.\n\n" +
+        "[Request access] [Edit details] [Cancel]",
       "Can I get access to Power BI?":
-        "Absolutely! Access to Power BI is typically managed by your IT team.\nYou can request access via the application catalog or by submitting a ticket.\nLet me know if you'd like step-by-step instructions or help with the request form.",
+        "**1.** You're requesting access to Power BI. Let me check your current access and prepare a request...\n\n---\n\n" +
+        "**2.** I'll confirm your user details and ensure you meet the requirements for Power BI access.\n\n---\n\n" +
+        "**3.** Please confirm the following details to proceed:\n\n" +
+        "- **App:** Power BI\n" +
+        "- **User:** John Doe (john.doe@example.com)\n\n" +
+        "[Request access] [Edit details] [Cancel]",
+      "Can you give me access to Zoom?":
+        "**1.** You're requesting access to Zoom. I'll check your current access and prepare a request...\n\n---\n\n" +
+        "**2.** I'll confirm your user details and ensure you meet the requirements for Zoom access.\n\n---\n\n" +
+        "**3.** Please confirm the following details to proceed:\n\n" +
+        "- **App:** Zoom\n" +
+        "- **User:** John Doe (john.doe@example.com)\n\n" +
+        "[Request access] [Edit details] [Cancel]",
     }
   },
   'group-management': {
     prompts: [
       { text: "How do I add a user to a group?", highlighted: "add a user to a group" },
       { text: "How can I see all members of a group?", highlighted: "see all members of a group" },
+      { text: "Am I part of the product group?", highlighted: "part of the product group" },
     ],
     responses: {
       "How do I add a user to a group?":
-        "To add a user to a group in Azure AD:\n1. Go to Azure AD > Groups.\n2. Select the group you want to manage.\n3. Click on 'Members' and then 'Add members.'\n4. Search for the user and add them.\nWould you like screenshots or a video guide?",
+        "**1.** You want to add a user to a group. Let me check your permissions and available groups...\n\n---\n\n" +
+        "**2.** Only group owners or admins can add members. I'll verify your access and prepare the add-member form.\n\n---\n\n" +
+        "**3.** Please specify the group and user to add, or choose from your managed groups.\n\n" +
+        "[Add user] [Select group] [Cancel]",
       "How can I see all members of a group?":
-        "You can view all members by navigating to the group in Azure AD and selecting the 'Members' tab.\nIf you need a list exported or filtered by role, let me know!",
+        "**1.** You want to view group members. I'll fetch the list for your selected group...\n\n---\n\n" +
+        "**2.** Viewing group membership helps manage access and collaboration.\n\n---\n\n" +
+        "**3.** Please specify the group, or select from your groups below.\n\n" +
+        "[Show members] [Select group] [Cancel]",
+      "Am I part of the product group?":
+        "**1.** I'll check your membership in the product group.\n\n---\n\n" +
+        "**2.** There are multiple groups related to 'product.' Please specify which one you mean.\n\n---\n\n" +
+        "**3.**\n1. Product Management (product-management@example.com)\n2. All Product (all-product@example.com)\n3. User Experience (product-design@example.com)\n\n" +
+        "[Check membership] [Choose different group] [Cancel]",
     }
   },
   'user-provisioning': {
@@ -244,9 +302,15 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I create a new user in Azure AD?":
-        "To create a new user:\n1. Go to Azure AD > Users > New user.\n2. Fill in the required details (name, username, etc.).\n3. Assign roles or groups as needed.\nWould you like a detailed walkthrough or help with bulk user creation?",
+        "**1.** You want to create a new user. I'll check your permissions and prepare the user creation form...\n\n---\n\n" +
+        "**2.** Only admins can create new users. I'll guide you through the required fields.\n\n---\n\n" +
+        "**3.** Please provide the new user's name, email, and role.\n\n" +
+        "[Start user creation] [Cancel]",
       "How do I assign a role to a user?":
-        "Assigning a role is simple:\n1. Select the user in Azure AD.\n2. Go to 'Assigned roles' and click 'Add assignment.'\n3. Choose the appropriate role and confirm.\nLet me know if you need a list of available roles or best practices for role assignment!",
+        "**1.** You want to assign a role. I'll check available roles and your permissions...\n\n---\n\n" +
+        "**2.** Assigning roles controls access and permissions.\n\n---\n\n" +
+        "**3.** Please specify the user and role, or select from your managed users.\n\n" +
+        "[Assign role] [Select user] [Cancel]",
     }
   },
   'app-registration': {
@@ -256,9 +320,15 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I register a new app in Azure AD?":
-        "To register a new app:\n1. Go to Azure AD > App registrations > New registration.\n2. Enter the app name and redirect URI.\n3. Click 'Register' and configure settings as needed.\nWould you like help with authentication setup or API permissions?",
+        "**1.** You want to register a new app. I'll check your permissions and prepare the registration form...\n\n---\n\n" +
+        "**2.** App registration requires admin rights and specific details.\n\n---\n\n" +
+        "**3.** Please provide the app name and redirect URI, or start the registration wizard.\n\n" +
+        "[Start registration] [Cancel]",
       "How do I configure permissions for an app?":
-        "You can configure permissions by:\n1. Selecting the app registration.\n2. Navigating to 'API permissions.'\n3. Adding the required permissions and granting admin consent if needed.\nLet me know if you need help with specific APIs or permission types!",
+        "**1.** You want to configure app permissions. I'll fetch the app's current permissions...\n\n---\n\n" +
+        "**2.** Permissions control what the app can access.\n\n---\n\n" +
+        "**3.** Please specify the app and permissions to configure, or select from your registered apps.\n\n" +
+        "[Configure permissions] [Select app] [Cancel]",
     }
   },
   'audit-logs': {
@@ -268,9 +338,15 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I view Azure AD audit logs?":
-        "To view audit logs:\n1. Go to Azure AD > Audit logs.\n2. Use the filters to find specific events or users.\n3. Click on any log entry for more details.\nIf you need help interpreting the logs or troubleshooting an event, just ask!",
+        "**1.** You want to view audit logs. I'll fetch the latest logs for your account...\n\n---\n\n" +
+        "**2.** Audit logs help track changes and monitor security.\n\n---\n\n" +
+        "**3.** Please specify the date range or type of logs you want to view.\n\n" +
+        "[View logs] [Select date range] [Cancel]",
       "Can I export audit logs?":
-        "Yes, you can export audit logs to CSV directly from the Azure portal's Audit logs section.\nWould you like step-by-step export instructions or help with log analysis?",
+        "**1.** You want to export audit logs. I'll prepare the export file...\n\n---\n\n" +
+        "**2.** Exporting logs allows for offline analysis and compliance.\n\n---\n\n" +
+        "**3.** Please specify the format (CSV, PDF) and date range.\n\n" +
+        "[Export as CSV] [Export as PDF] [Cancel]",
     }
   },
   'help-support': {
@@ -280,9 +356,15 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I contact support?":
-        "You can contact support by submitting a ticket through your organization's help portal or by calling the IT helpdesk.\nIf you need urgent assistance, let me know and I can provide escalation steps or direct contact info.",
+        "**1.** You need support. I'll check available contact options...\n\n---\n\n" +
+        "**2.** Support can be reached via ticket, chat, or phone.\n\n---\n\n" +
+        "**3.** Please choose your preferred support channel.\n\n" +
+        "[Submit ticket] [Call IT] [Cancel]",
       "Where can I find Azure AD documentation?":
-        "You can find official Azure AD documentation on the Microsoft Docs website.\nWould you like a direct link or help finding documentation for a specific feature?",
+        "**1.** You're looking for documentation. I'll fetch the latest Azure AD docs...\n\n---\n\n" +
+        "**2.** Official docs provide step-by-step guides and troubleshooting.\n\n---\n\n" +
+        "**3.** Would you like a direct link or help with a specific topic?\n\n" +
+        "[Get documentation link] [Search topic] [Cancel]",
     }
   },
   'leave-request': {
@@ -290,14 +372,32 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
       { text: "How do I apply for leave?", highlighted: "apply for leave" },
       { text: "Can I check my leave balance?", highlighted: "leave balance" },
       { text: "How do I track my leave approval?", highlighted: "track my leave approval" },
+      { text: "I want to take 3 days off next week from Wednesday to Friday.", highlighted: "3 days off next week" },
     ],
     responses: {
       "How do I apply for leave?":
-        "Absolutely! To apply for leave, go to the Leave Request section, select your leave type and dates, and submit your request.\nWould you like a step-by-step guide or a direct link to the leave form?",
+        "**1.** You want to apply for leave. I'll check your leave balance and prepare the request form...\n\n---\n\n" +
+        "**2.** Leave requests require available balance and manager approval.\n\n---\n\n" +
+        "**3.** Please select your leave type and dates, or start the leave request form.\n\n" +
+        "[Submit leave request] [Edit dates] [Cancel]",
       "Can I check my leave balance?":
-        "Yes, you can check your leave balance in your HR portal under 'Leave Balance' or 'My Profile.'\nLet me know if you need help finding this section or understanding your balance.",
+        "**1.** Let me check your current leave balance in the HR system...\n\n---\n\n" +
+        "**2.** I'm verifying your available Paid Time Off (PTO) days based on your employment records and recent leave usage.\n\n---\n\n" +
+        "**3.** Your current PTO balance is **24 days**. Would you like to see a breakdown by leave type or request time off?\n\n" +
+        "[Show breakdown] [Request time off] [Cancel]",
       "How do I track my leave approval?":
-        "You can track your leave approval status in the Leave Request history or notifications area.\nWould you like to receive updates or reminders about your leave requests?",
+        "**1.** You want to track your leave approval. I'll check the status of your recent requests...\n\n---\n\n" +
+        "**2.** Leave approvals are managed by your supervisor.\n\n---\n\n" +
+        "**3.** Here's the status of your latest leave request: **Pending approval**. Would you like to receive updates?\n\n" +
+        "[Get updates] [Cancel]",
+      "I want to take 3 days off next week from Wednesday to Friday.":
+        "**1.** You want to request 3 days off next week. I'll prepare the leave request for your review...\n\n---\n\n" +
+        "**2.** I need to confirm your requested dates and user details before submitting.\n\n---\n\n" +
+        "**3.** Please confirm the following details for your PTO request:\n\n" +
+        "- **Start Date:** 2025-05-21 (Wednesday)\n" +
+        "- **End Date:** 2025-05-23 (Friday)\n" +
+        "- **User:** John Doe - john.doe@example.com\n\n" +
+        "[Submit leave request] [Edit dates] [Cancel]",
     }
   },
   'payslip-download': {
@@ -308,11 +408,20 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I download my latest payslip?":
-        "To download your latest payslip, go to the Payslip section in your HR portal and click on the most recent payslip.\nWould you like a direct link or help with the download process?",
+        "**1.** You want to download your latest payslip. I'll fetch your most recent document...\n\n---\n\n" +
+        "**2.** Payslips are available in your HR portal.\n\n---\n\n" +
+        "**3.** Please confirm your identity to download your payslip.\n\n" +
+        "[Download payslip] [Cancel]",
       "Can I view my payslip history?":
-        "Yes, you can view your payslip history in the same section.\nYou'll see a list of all your previous payslips, which you can download or print as needed.",
+        "**1.** You want to view your payslip history. I'll retrieve your past payslips...\n\n---\n\n" +
+        "**2.** Payslip history helps you track your earnings and deductions.\n\n---\n\n" +
+        "**3.** Here are your last 5 payslips. Would you like to download any?\n\n" +
+        "[View payslips] [Download payslip] [Cancel]",
       "What if I can't open my payslip?":
-        "If you're having trouble opening your payslip, make sure you have a PDF reader installed.\nIf the issue persists, let me know and I can help troubleshoot or connect you with HR support.",
+        "**1.** You're having trouble opening your payslip. Let me check the file format and your device compatibility...\n\n---\n\n" +
+        "**2.** Payslips are usually in PDF format.\n\n---\n\n" +
+        "**3.** Please ensure you have a PDF reader installed. If the issue persists, I can connect you with HR support.\n\n" +
+        "[Get help] [Cancel]",
     }
   },
   'update-personal-info': {
@@ -323,11 +432,20 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I update my address?":
-        "To update your address, go to the Personal Info section in your HR portal and edit your address details.\nWould you like a step-by-step guide or help with submitting the change?",
+        "**1.** You want to update your address. I'll open the personal info form...\n\n---\n\n" +
+        "**2.** Keeping your address up to date ensures you receive important documents.\n\n---\n\n" +
+        "**3.** Please enter your new address or upload proof of address if required.\n\n" +
+        "[Update address] [Cancel]",
       "Can I change my bank account details?":
-        "Yes, you can change your bank account details in the Payroll or Personal Info section.\nLet me know if you need help finding the right form or want to know about approval timelines.",
+        "**1.** You want to change your bank account details. I'll open the payroll info form...\n\n---\n\n" +
+        "**2.** Updating your bank details ensures your salary is deposited correctly.\n\n---\n\n" +
+        "**3.** Please enter your new bank account information.\n\n" +
+        "[Update bank details] [Cancel]",
       "How do I review my personal info?":
-        "You can review all your personal information in the HR portal under 'My Profile' or 'Personal Info.'\nWould you like to check for any outdated details or get a summary of your current info?",
+        "**1.** You want to review your personal info. I'll fetch your current records...\n\n---\n\n" +
+        "**2.** Reviewing your info helps keep your records accurate.\n\n---\n\n" +
+        "**3.** Here's a summary of your current personal info. Would you like to update anything?\n\n" +
+        "[View info] [Update info] [Cancel]",
     }
   },
   'hr-helpdesk': {
@@ -338,11 +456,20 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I contact HR support?":
-        "You can contact HR support by submitting a ticket in the HR Helpdesk section or by calling the HR helpline.\nWould you like a direct link or the contact number?",
+        "**1.** You need HR support. I'll check available contact options...\n\n---\n\n" +
+        "**2.** HR can be reached via ticket, chat, or phone.\n\n---\n\n" +
+        "**3.** Please choose your preferred HR support channel.\n\n" +
+        "[Submit HR ticket] [Call HR] [Cancel]",
       "Can I submit an HR query?":
-        "Yes, you can submit any HR-related query through the HR Helpdesk.\nJust fill out the query form and HR will get back to you as soon as possible.",
+        "**1.** You want to submit an HR query. I'll open the query form...\n\n---\n\n" +
+        "**2.** Submitting queries helps HR address your concerns efficiently.\n\n---\n\n" +
+        "**3.** Please enter your query or select a topic.\n\n" +
+        "[Submit query] [Cancel]",
       "Where can I find HR policies?":
-        "HR policies are available in the HR portal under 'Policies' or 'Resources.'\nLet me know if you need a specific policy or a summary of the most important ones.",
+        "**1.** You're looking for HR policies. I'll fetch the latest policy documents...\n\n---\n\n" +
+        "**2.** HR policies are available in the HR portal.\n\n---\n\n" +
+        "**3.** Would you like a direct link or a summary of key policies?\n\n" +
+        "[Get link] [View summary] [Cancel]",
     }
   },
   'resource-onboarding': {
@@ -354,13 +481,25 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
     ],
     responses: {
       "How do I start onboarding a new employee?":
-        "To start onboarding a new employee, go to the Resource Onboarding section and fill out the new hire form with their details.\nWould you like a step-by-step guide or a checklist of what's required?",
+        "**1.** You want to onboard a new employee. I'll open the onboarding form...\n\n---\n\n" +
+        "**2.** Onboarding requires collecting personal and job details.\n\n---\n\n" +
+        "**3.** Please enter the new hire's information to begin onboarding.\n\n" +
+        "[Start onboarding] [Cancel]",
       "What documents are needed for onboarding?":
-        "Typically, you'll need identification, tax forms, signed offer letter, and bank details.\nI can provide a full checklist or help you upload documents if needed.",
+        "**1.** You want to know which documents are needed. I'll fetch the onboarding checklist...\n\n---\n\n" +
+        "**2.** Required documents include ID, tax forms, and offer letter.\n\n---\n\n" +
+        "**3.** Here's a checklist of required documents. Would you like to upload them now?\n\n" +
+        "[View checklist] [Upload documents] [Cancel]",
       "How can I track onboarding progress?":
-        "You can track onboarding progress in the Onboarding Dashboard, which shows completed and pending tasks for each new resource.\nWould you like to see an example dashboard or get notifications for key milestones?",
+        "**1.** You want to track onboarding progress. I'll fetch the onboarding dashboard...\n\n---\n\n" +
+        "**2.** Tracking progress ensures all tasks are completed on time.\n\n---\n\n" +
+        "**3.** Here's the onboarding status for your new hire. Would you like notifications for key milestones?\n\n" +
+        "[View dashboard] [Get notifications] [Cancel]",
       "Can I send a welcome email automatically?":
-        "Yes! You can set up an automated welcome email as part of the onboarding workflow.\nWould you like a sample welcome email template or help configuring the automation?",
+        "**1.** You want to send a welcome email. I'll check if automation is enabled...\n\n---\n\n" +
+        "**2.** Automated emails help new hires feel welcome.\n\n---\n\n" +
+        "**3.** Would you like to use a template or write a custom message?\n\n" +
+        "[Use template] [Write custom] [Cancel]",
     }
   },
 };
@@ -451,41 +590,28 @@ export default function Home() {
   const chatState = chatStates[selectedWorkflow] || { messages: [], input: '', isLoading: false };
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100vh', bgcolor: BRAND_COLORS.background.light }}>
+    <Box sx={{ display: 'flex', height: '100vh', minHeight: 0, bgcolor: BRAND_COLORS.background.light }}>
       <Sidebar selectedWorkflow={selectedWorkflow} setSelectedWorkflow={setSelectedWorkflow} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        <Container maxWidth="lg">
-          {/* Toggleable Info Card for all workflows */}
-          <Box sx={{ mb: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 1 }}>
-              <Typography variant="h6" sx={{ fontWeight: 600, color: BRAND_COLORS.text.primary, mr: 1 }}>
-                {workflowHeadings[selectedWorkflow]}
+      <Box component="main" sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100vh', minHeight: 0, bgcolor: BRAND_COLORS.background.light, p: 0 }}>
+        <Container maxWidth="lg" sx={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0, p: 0 }}>
+          {/* Always show the info card for the workflow at the top, no heading or toggle */}
+          <Box sx={{ mb: 0, p: 3 }}>
+            <Paper sx={{ p: 3, borderRadius: 2, background: 'linear-gradient(90deg, #f5f7fb 60%, #e8eafd 100%)', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', mb: 0 }}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center' }}>
+                {workflowInfoContent[selectedWorkflow]?.heading}
               </Typography>
-              <IconButton onClick={() => setShowInfo((prev) => !prev)} size="small" sx={{ ml: 0.5 }}>
-                {showInfo ? <ExpandLess /> : <ExpandMore />}
-              </IconButton>
-              <Typography variant="body2" sx={{ color: BRAND_COLORS.text.secondary, ml: 1, cursor: 'pointer' }} onClick={() => setShowInfo((prev) => !prev)}>
-                {showInfo ? 'Hide details' : 'Show details'}
+              <Typography variant="body1" sx={{ color: BRAND_COLORS.text.secondary, mb: 2 }}>
+                {workflowInfoContent[selectedWorkflow]?.description}
               </Typography>
-            </Box>
-            <Collapse in={showInfo} timeout="auto" unmountOnExit>
-              <Paper sx={{ p: 3, borderRadius: 2, background: 'linear-gradient(90deg, #f5f7fb 60%, #e8eafd 100%)', boxShadow: '0 5px 20px rgba(0,0,0,0.05)', mb: 2 }}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1, display: 'flex', alignItems: 'center' }}>
-                  {workflowInfoContent[selectedWorkflow]?.heading}
-                </Typography>
-                <Typography variant="body1" sx={{ color: BRAND_COLORS.text.secondary, mb: 2 }}>
-                  {workflowInfoContent[selectedWorkflow]?.description}
-                </Typography>
-                <ul style={{ margin: 0, paddingLeft: 24 }}>
-                  {workflowInfoContent[selectedWorkflow]?.bullets.map((item, idx) => (
-                    <li key={idx} style={{ color: BRAND_COLORS.text.primary, marginBottom: 4 }}>{item}</li>
-                  ))}
-                </ul>
-              </Paper>
-            </Collapse>
+              <ul style={{ margin: 0, paddingLeft: 24 }}>
+                {workflowInfoContent[selectedWorkflow]?.bullets.map((item, idx) => (
+                  <li key={idx} style={{ color: BRAND_COLORS.text.primary, marginBottom: 4 }}>{item}</li>
+                ))}
+              </ul>
+            </Paper>
           </Box>
-          {/* Chat area is always full width */}
-          <Box>
+          {/* Chat area fills the rest of the page height */}
+          <Box sx={{ flex: 1, minHeight: 0, display: 'flex', flexDirection: 'column', p: 0, height: 0 }}>
             <ChatInterface
               samplePrompts={promptsAndResponses.prompts}
               responses={promptsAndResponses.responses}

@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import {
   Box,
   TextField,
@@ -9,7 +9,9 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
-  Avatar
+  Avatar,
+  Button,
+  Divider
 } from '@mui/material';
 import { Send, KeyboardArrowDown, SmartToy, Person } from '@mui/icons-material';
 
@@ -43,39 +45,97 @@ const userPersonas = [
 ];
 const assistantPersona = { name: 'RC Agentic AI', avatar: <SmartToy /> };
 
+// Helper to parse steps and actions from assistant response
+function parseAssistantResponse(text: string) {
+  // Split by --- (divider between steps)
+  const stepParts = text.split(/---/g).map(s => s.trim()).filter(Boolean);
+  // Find last part with [Button]s
+  let actions: string[] = [];
+  if (stepParts.length > 0) {
+    const last = stepParts[stepParts.length - 1];
+    const buttonMatches = Array.from(last.matchAll(/\[(.*?)\]/g));
+    if (buttonMatches.length > 0) {
+      actions = buttonMatches.map(m => m[1]);
+      // Remove [Button]s from last step
+      stepParts[stepParts.length - 1] = last.replace(/\[(.*?)\]/g, '').trim();
+    }
+  }
+  return { steps: stepParts, actions };
+}
+
+// Helper to reveal steps one by one with delay
+function revealNextStep(steps: string[], setDisplayedSteps: React.Dispatch<React.SetStateAction<string[]>>, setIsLoading: (loading: boolean) => void, i: number = 0) {
+  setDisplayedSteps(prev => [...prev, steps[i]]);
+  i++;
+  if (i < steps.length) {
+    setTimeout(() => revealNextStep(steps, setDisplayedSteps, setIsLoading, i), 1200);
+  } else {
+    setIsLoading(false);
+  }
+}
+
 export default function ChatInterface({ samplePrompts, responses, messages, input, setMessages, setInput, isLoading, setIsLoading }: ChatInterfaceProps) {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const [inputWidth, setInputWidth] = React.useState<number | undefined>(undefined);
+  // For step-by-step assistant message rendering
+  const [pendingSteps, setPendingSteps] = React.useState<string[]>([]);
+  const [displayedSteps, setDisplayedSteps] = React.useState<string[]>([]);
+  const [pendingActions, setPendingActions] = React.useState<string[]>([]);
+  const [pendingMessageIdx, setPendingMessageIdx] = React.useState<number | null>(null);
+  const prevMessagesRef = React.useRef<Message[]>(messages);
+  const chatHistoryRef = useRef<HTMLDivElement>(null);
 
   // Pick a sample user persona for this session
   const userPersona = React.useMemo(() => userPersonas[Math.floor(Math.random() * userPersonas.length)], []);
 
+  // Auto-scroll to bottom when messages change
+  useEffect(() => {
+    if (chatHistoryRef.current) {
+      chatHistoryRef.current.scrollTop = chatHistoryRef.current.scrollHeight;
+    }
+    return undefined;
+  }, [messages, isLoading]);
+
+  // Modified handleSend for step-by-step assistant response
   const handleSend = async () => {
     if (!input.trim()) return;
-
     const userMessage: Message = {
       text: input,
       isUser: true,
       timestamp: new Date(),
     };
-
     setMessages([...messages, userMessage]);
     setInput('');
     setIsLoading(true);
-
     try {
-      // Use mapped response if input matches a sample prompt, else default
       const botText =
         responses[input.trim()] ||
         "I'll help you reset your password. Please verify your identity first. Would you like to receive a verification code via email or phone?";
-
+      // If it's a multi-step response, use step-by-step rendering
+      if (botText.includes('**1.**')) {
+        const { steps, actions } = parseAssistantResponse(botText);
+        setPendingSteps(steps);
+        setPendingActions(actions);
+        setDisplayedSteps([]);
+        setPendingMessageIdx(messages.length + 1); // index for this bot message
+        prevMessagesRef.current = [...messages, userMessage, {
+          text: '',
+          isUser: false,
+          timestamp: new Date(),
+        }];
+        // Reveal steps one by one
+        setTimeout(() => revealNextStep(steps, setDisplayedSteps, setIsLoading, 0), 1200);
+        // Add a placeholder bot message (will be replaced as steps are revealed)
+        setMessages(prevMessagesRef.current);
+        return;
+      }
+      // Fallback: normal single-message bot response
       const botResponse: Message = {
         text: botText,
         isUser: false,
         timestamp: new Date(),
       };
-
       setTimeout(() => {
         setMessages([...messages, userMessage, botResponse]);
         setIsLoading(false);
@@ -84,6 +144,45 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
       console.error('Error processing message:', error);
       setIsLoading(false);
     }
+  };
+
+  // Effect: update the last assistant message as steps are revealed
+  React.useEffect(() => {
+    if (pendingMessageIdx !== null && displayedSteps.length > 0) {
+      const newMessages = [...prevMessagesRef.current];
+      // Only update if the placeholder bot message exists
+      if (newMessages[pendingMessageIdx]) {
+        newMessages[pendingMessageIdx] = {
+          ...newMessages[pendingMessageIdx],
+          text: displayedSteps.join('\n\n---\n\n'),
+        };
+        setMessages(newMessages);
+        prevMessagesRef.current = newMessages;
+      }
+    }
+    // When all steps are revealed, reset pending state
+    if (
+      pendingMessageIdx !== null &&
+      displayedSteps.length === pendingSteps.length &&
+      pendingSteps.length > 0
+    ) {
+      setTimeout(() => {
+        setPendingSteps([]);
+        setDisplayedSteps([]);
+        setPendingActions([]);
+        setPendingMessageIdx(null);
+      }, 100);
+    }
+  }, [displayedSteps, pendingSteps, pendingMessageIdx, setMessages]);
+
+  // Handler for action button clicks (for demo, just add a message)
+  const handleActionClick = (action: string) => {
+    setMessages([...messages, {
+      text: action,
+      isUser: true,
+      timestamp: new Date(),
+    }]);
+    setInput('');
   };
 
   const handleMenuOpen = () => {
@@ -104,8 +203,9 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
   };
 
   return (
-    <Paper sx={{ p: 2, height: '500px', display: 'flex', flexDirection: 'column' }}>
-      <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
+    <Paper sx={{ p: 0, height: '100%', display: 'flex', flexDirection: 'column', boxShadow: '0 2px 16px rgba(74,108,247,0.07)' }}>
+      {/* Chat history area with internal scroll */}
+      <Box ref={chatHistoryRef} sx={{ flex: 1, minHeight: 0, maxHeight: '100%', overflowY: 'auto', px: { xs: 1, sm: 3 }, pt: 3, pb: 0, background: 'transparent' }}>
         {messages.map((message, index) => {
           const isUser = message.isUser;
           const senderName = isUser ? userPersona.name : assistantPersona.name;
@@ -114,6 +214,15 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
           ) : (
             <Avatar sx={{ bgcolor: '#fff', color: '#1976d2', width: 32, height: 32 }}>{assistantPersona.avatar}</Avatar>
           );
+          // Determine if this message is a multi-step assistant response
+          const isMultiStepAssistant =
+            !isUser && typeof message.text === 'string' && message.text.includes('**1.**') && message.text.includes('---');
+          // Assistant message: if this is the last message and step-by-step is active, render steps and actions
+          const isLastAssistant =
+            !isUser &&
+            index === messages.length - 1 &&
+            displayedSteps.length > 0 &&
+            pendingMessageIdx === index;
           return (
             <Box
               key={index}
@@ -136,7 +245,55 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
                   <Typography variant="caption" sx={{ fontWeight: 600, opacity: 0.8, display: 'block', mb: 0.5 }}>
                     {senderName}
                   </Typography>
-                  <Typography variant="body1">{message.text}</Typography>
+                  {/* Step-by-step assistant rendering for both in-progress and history */}
+                  {(isLastAssistant || isMultiStepAssistant) ? (() => {
+                    // Use displayedSteps if in-progress, else parse from message.text
+                    let steps: string[] = [];
+                    let actions: string[] = [];
+                    let totalSteps = 0;
+                    if (isLastAssistant) {
+                      steps = displayedSteps;
+                      actions = pendingActions;
+                      totalSteps = pendingSteps.length;
+                    } else if (isMultiStepAssistant) {
+                      const parsed = parseAssistantResponse(message.text);
+                      steps = parsed.steps;
+                      actions = parsed.actions;
+                      // Count total steps by parsing the original message text for '**n.**'
+                      totalSteps = (message.text.match(/\*\*\d+\.\*\*/g) || []).length;
+                    }
+                    return (
+                      <Box>
+                        {steps.map((step, i) => (
+                          <Box key={i} sx={{ mb: 3, p: 2, background: '#f5f7fb', borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.07)' }}>
+                            <Typography variant="body1" sx={{ whiteSpace: 'pre-line', fontSize: '1.08rem' }}>{step}</Typography>
+                            {i < steps.length - 1 && <Divider sx={{ my: 2, borderBottomWidth: 3, bgcolor: '#4A6CF7' }} />}
+                          </Box>
+                        ))}
+                        {/* Render action buttons only if all steps are shown */}
+                        {steps.length === totalSteps && actions.length > 0 && (
+                          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', mt: 2, mb: 1 }}>
+                            {actions.map((action, idx) => (
+                              <Button
+                                key={idx}
+                                variant="contained"
+                                color={action.toLowerCase().includes('cancel') ? 'error' : 'primary'}
+                                size="medium"
+                                sx={{ fontWeight: 700, px: 3, py: 1, borderRadius: 2, boxShadow: '0 2px 8px rgba(74,108,247,0.10)' }}
+                                onClick={() => handleActionClick(action)}
+                              >
+                                {action}
+                              </Button>
+                            ))}
+                          </Box>
+                        )}
+                      </Box>
+                    );
+                  })() : (
+                    <>
+                      <Typography variant="body1">{message.text}</Typography>
+                    </>
+                  )}
                   <Typography variant="caption" sx={{ opacity: 0.7 }}>
                     {message.timestamp.toLocaleTimeString()}
                   </Typography>
@@ -151,108 +308,55 @@ export default function ChatInterface({ samplePrompts, responses, messages, inpu
           </Box>
         )}
       </Box>
-
-      <Box sx={{ mb: 1 }}>
-        <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-          Ask a Question
-        </Typography>
-        <Typography variant="body2" sx={{ color: 'text.secondary' }}>
-          Type your question or select from common queries
-        </Typography>
-      </Box>
-
-      <Box sx={{ display: 'flex', gap: 1 }}>
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Search for answers or give me an action"
-          value={input}
-          inputRef={inputRef}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => {
-            if (e.key === 'Enter') {
-              handleSend();
-            }
-          }}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <Box sx={{ display: 'flex', gap: 1 }}>
-                  <Box
-                    onClick={handleMenuOpen}
-                    sx={{
-                      cursor: 'pointer',
-                      display: 'flex',
-                      alignItems: 'center',
-                    }}
-                  >
-                    <KeyboardArrowDown
-                      sx={{
-                        color: 'primary.main',
-                        transition: 'transform 0.2s ease',
-                        transform: anchorEl ? 'rotate(180deg)' : 'rotate(0deg)',
-                      }}
-                    />
-                  </Box>
+      {/* Input area and sample prompts, fixed at the bottom */}
+      <Box sx={{ flexShrink: 0, p: { xs: 1, sm: 2 }, borderTop: '1px solid #e0e7ef', background: '#fff', boxShadow: '0 -2px 16px rgba(74,108,247,0.04)', borderRadius: '0 0 16px 16px', zIndex: 2 }}>
+        <Box sx={{ mb: 1, display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+          {samplePrompts.map((prompt, index) => (
+            <Button
+              key={index}
+              variant="outlined"
+              size="small"
+              sx={{ borderRadius: 3, textTransform: 'none', fontWeight: 500, bgcolor: '#f5f7fb', color: '#4A6CF7', borderColor: '#e0e7ef', '&:hover': { bgcolor: '#e8eafd', borderColor: '#4A6CF7' } }}
+              onClick={() => setInput(prompt.text)}
+            >
+              {prompt.text.split(prompt.highlighted).map((part, i, arr) => (
+                <span key={i}>
+                  {part}
+                  {i < arr.length - 1 && (
+                    <span style={{ backgroundColor: 'rgba(74,108,247,0.10)', padding: '2px 6px', borderRadius: '4px', color: '#4A6CF7', fontWeight: 600 }}>
+                      {prompt.highlighted}
+                    </span>
+                  )}
+                </span>
+              ))}
+            </Button>
+          ))}
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Type your question or action..."
+            value={input}
+            inputRef={inputRef}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter') {
+                handleSend();
+              }
+            }}
+            sx={{ borderRadius: 3, bgcolor: '#f5f7fb', '& .MuiOutlinedInput-root': { borderRadius: 3 } }}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
                   <IconButton color="primary" onClick={handleSend} disabled={!input.trim() || isLoading}>
                     <Send />
                   </IconButton>
-                </Box>
-              </InputAdornment>
-            ),
-          }}
-        />
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          PaperProps={{
-            sx: {
-              mt: 1,
-              maxHeight: 300,
-              width: inputWidth ? `${inputWidth}px` : '100%',
-              boxShadow: '0 5px 20px rgba(0,0,0,0.1)',
-              '& .MuiMenuItem-root': {
-                py: 1.5,
-                px: 2,
-                '&:hover': {
-                  backgroundColor: 'primary.light',
-                },
-              },
-            },
-          }}
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-          transformOrigin={{ vertical: 'top', horizontal: 'left' }}
-        >
-          {samplePrompts.map((prompt, index) => (
-            <MenuItem
-              key={index}
-              onClick={() => handleSamplePromptSelect(prompt.text)}
-              sx={{ whiteSpace: 'normal', wordBreak: 'break-word' }}
-            >
-              <Typography sx={{ color: 'text.primary' }}>
-                {prompt.text.split(prompt.highlighted).map((part, i, arr) => (
-                  <span key={i}>
-                    {part}
-                    {i < arr.length - 1 && (
-                      <span
-                        style={{
-                          backgroundColor: 'rgba(0,35,102,0.08)',
-                          padding: '2px 6px',
-                          borderRadius: '4px',
-                          color: '#002366',
-                          fontWeight: 500,
-                        }}
-                      >
-                        {prompt.highlighted}
-                      </span>
-                    )}
-                  </span>
-                ))}
-              </Typography>
-            </MenuItem>
-          ))}
-        </Menu>
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Box>
       </Box>
     </Paper>
   );

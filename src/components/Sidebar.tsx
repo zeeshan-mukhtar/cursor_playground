@@ -63,21 +63,27 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
         '& .MuiDrawer-paper': {
           width: DRAWER_WIDTH,
           boxSizing: 'border-box',
+          background: '#f5f7fb',
+          color: '#222',
+          borderRight: 'none',
+          borderRadius: '18px',
+          margin: '16px 0 16px 12px',
+          boxShadow: '0 4px 24px rgba(74,108,247,0.08)',
         },
       }}
     >
-      <Box sx={{ p: 2 }}>
-        <Typography variant="h6" noWrap component="div">
-          RC Agentic AI Playground
+      <Box sx={{ p: 2, pb: 1 }}>
+        <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700, fontSize: 22, letterSpacing: 1, color: '#2a3535' }}>
+          Playground
         </Typography>
       </Box>
-      <Divider />
+      <Divider sx={{ bgcolor: '#e0e7ef', mb: 1 }} />
       <List>
         {/* IT NOC Section */}
-        <ListItem button onClick={() => setOpenITNOC((prev) => !prev)}>
-          <ListItemIcon><BusinessCenter /></ListItemIcon>
-          <ListItemText primary="IT NOC" />
-          {openITNOC ? <ExpandLess /> : <ExpandMore />}
+        <ListItem button onClick={() => setOpenITNOC((prev) => !prev)} sx={{ borderRadius: 3, mb: 0.5 }}>
+          <ListItemIcon sx={{ color: '#4A6CF7' }}><BusinessCenter /></ListItemIcon>
+          <ListItemText primary={<span style={{ fontWeight: 600, fontSize: 16, color: '#2a3535' }}>IT NOC</span>} />
+          {openITNOC ? <ExpandLess sx={{ color: '#4A6CF7' }} /> : <ExpandMore sx={{ color: '#4A6CF7' }} />}
         </ListItem>
         <Collapse in={openITNOC} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
@@ -87,20 +93,31 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
                 key={workflow.id}
                 selected={selectedWorkflow === workflow.id}
                 onClick={() => setSelectedWorkflow(workflow.id)}
-                sx={{ pl: 4 }}
+                sx={{
+                  pl: 4,
+                  borderRadius: 99,
+                  my: 0.5,
+                  color: '#2a3535',
+                  background: selectedWorkflow === workflow.id ? '#e8eafd' : 'transparent',
+                  '&:hover': {
+                    background: '#e8eafd',
+                    color: '#4A6CF7',
+                  },
+                  transition: 'background 0.2s',
+                }}
               >
-                <ListItemIcon>{workflow.icon}</ListItemIcon>
+                <ListItemIcon sx={{ color: '#4A6CF7' }}>{workflow.icon}</ListItemIcon>
                 <ListItemText primary={workflow.name} />
               </ListItem>
             ))}
           </List>
         </Collapse>
-        <Divider sx={{ my: 1 }} />
+        <Divider sx={{ my: 2, bgcolor: '#e0e7ef' }} />
         {/* HR Section */}
-        <ListItem button onClick={() => setOpenHR((prev) => !prev)}>
-          <ListItemIcon><AssignmentInd /></ListItemIcon>
-          <ListItemText primary="HR" />
-          {openHR ? <ExpandLess /> : <ExpandMore />}
+        <ListItem button onClick={() => setOpenHR((prev) => !prev)} sx={{ borderRadius: 3, mb: 0.5 }}>
+          <ListItemIcon sx={{ color: '#4A6CF7' }}><AssignmentInd /></ListItemIcon>
+          <ListItemText primary={<span style={{ fontWeight: 600, fontSize: 16, color: '#2a3535' }}>HR</span>} />
+          {openHR ? <ExpandLess sx={{ color: '#4A6CF7' }} /> : <ExpandMore sx={{ color: '#4A6CF7' }} />}
         </ListItem>
         <Collapse in={openHR} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
@@ -110,9 +127,20 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
                 key={workflow.id}
                 selected={selectedWorkflow === workflow.id}
                 onClick={() => setSelectedWorkflow(workflow.id)}
-                sx={{ pl: 4 }}
+                sx={{
+                  pl: 4,
+                  borderRadius: 99,
+                  my: 0.5,
+                  color: '#2a3535',
+                  background: selectedWorkflow === workflow.id ? '#e8eafd' : 'transparent',
+                  '&:hover': {
+                    background: '#e8eafd',
+                    color: '#4A6CF7',
+                  },
+                  transition: 'background 0.2s',
+                }}
               >
-                <ListItemIcon>{workflow.icon}</ListItemIcon>
+                <ListItemIcon sx={{ color: '#4A6CF7' }}>{workflow.icon}</ListItemIcon>
                 <ListItemText primary={workflow.name} />
               </ListItem>
             ))}
