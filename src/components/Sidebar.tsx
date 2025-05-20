@@ -74,7 +74,7 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
     >
       <Box sx={{ p: 2, pb: 1 }}>
         <Typography variant="h6" noWrap component="div" sx={{ fontWeight: 700, fontSize: 22, letterSpacing: 1, color: '#2a3535' }}>
-          Playground
+          AI Playground
         </Typography>
       </Box>
       <Divider sx={{ bgcolor: '#e0e7ef', mb: 1 }} />
