@@ -182,6 +182,51 @@ const workflowInfoContent: Record<string, { heading: string; description: string
       'Send welcome emails and assign a buddy',
     ],
   },
+  'travel-request': {
+    heading: '✈️ Try it yourself!',
+    description: "Need to raise a travel request? Here's what you can do with AI Playground:",
+    bullets: [
+      'Raise a travel request via Zoho People',
+      'AI validates completeness and requests missing documents',
+      'AI checks available flight options and highlights best fares',
+    ],
+  },
+  'visa-processing': {
+    heading: '🛂 Try it yourself!',
+    description: "Need help with visa processing? Here's what you can do:",
+    bullets: [
+      'AI validates checklist for visa initiation',
+      'Notifies employee if incomplete',
+      'Initiates visa process if required',
+    ],
+  },
+  'travel-booking': {
+    heading: '🏨 Try it yourself!',
+    description: "Want to book flights, hotels, or cars? Here's what you can do:",
+    bullets: [
+      'AI fetches and highlights best flight/hotel/car options',
+      'Shares compiled itinerary with employee',
+      'Checks out bookings via payment gateway',
+    ],
+  },
+  'travel-approval': {
+    heading: '✅ Try it yourself!',
+    description: "Need travel approval? Here's what you can do:",
+    bullets: [
+      'AI triggers L1/L2 manager approval with real-time fare details',
+      'Auto-approves if not received in 3 hours',
+      'Shares final itinerary and confirmation',
+    ],
+  },
+  'travel-expenses': {
+    heading: '💳 Try it yourself!',
+    description: "Want to log or review travel expenses? Here's what you can do:",
+    bullets: [
+      'Logs all final expenses in travel request form',
+      'Pays for bookings using credit card',
+      'View and export travel expense reports',
+    ],
+  },
 };
 
 // Define workflow-specific sample prompts and AI-style responses
@@ -502,6 +547,92 @@ const workflowPrompts: Record<string, { prompts: { text: string; highlighted: st
         "[Use template] [Write custom] [Cancel]",
     }
   },
+  'travel-request': {
+    prompts: [
+      { text: "I want to raise a travel request for next week.", highlighted: "raise a travel request" },
+      { text: "What documents do I need for a travel request?", highlighted: "documents do I need" },
+    ],
+    responses: {
+      "I want to raise a travel request for next week.":
+        "**1.** You want to raise a travel request. I'll validate your request and required documents...\n\n---\n\n" +
+        "**2.** Please provide your travel dates, destination, and purpose.\n\n---\n\n" +
+        "**3.** I'll check available flight options and highlight the best fares.\n\n" +
+        "[Provide details] [Cancel]",
+      "What documents do I need for a travel request?":
+        "**1.** For a travel request, you typically need an approved request form, ID proof, and any required client invitation.\n\n---\n\n" +
+        "**2.** I'll validate your documents and let you know if anything is missing.\n\n" +
+        "[Upload documents] [Cancel]",
+    }
+  },
+  'visa-processing': {
+    prompts: [
+      { text: "Do I need a visa for my trip?", highlighted: "need a visa" },
+      { text: "How do I start the visa process?", highlighted: "start the visa process" },
+    ],
+    responses: {
+      "Do I need a visa for my trip?":
+        "**1.** I'll check if a visa is required for your destination.\n\n---\n\n" +
+        "**2.** If required, I'll validate your checklist and initiate the visa process.\n\n" +
+        "[Check requirements] [Cancel]",
+      "How do I start the visa process?":
+        "**1.** To start the visa process, I'll need your travel details and supporting documents.\n\n---\n\n" +
+        "**2.** Please upload your documents and I'll notify you if anything is missing.\n\n" +
+        "[Upload documents] [Cancel]",
+    }
+  },
+  'travel-booking': {
+    prompts: [
+      { text: "Show me the best flight options for my trip.", highlighted: "best flight options" },
+      { text: "Can you book a hotel near the airport?", highlighted: "book a hotel" },
+      { text: "I need a car rental for my trip.", highlighted: "car rental" },
+    ],
+    responses: {
+      "Show me the best flight options for my trip.":
+        "**1.** I'll fetch available flight options for your requested dates.\n\n---\n\n" +
+        "**2.** Highlighting the best fares and minimum layover.\n\n" +
+        "[Show flights] [Cancel]",
+      "Can you book a hotel near the airport?":
+        "**1.** I'll fetch hotel options near your destination within your budget.\n\n---\n\n" +
+        "**2.** Please confirm your preferences.\n\n" +
+        "[Show hotels] [Cancel]",
+      "I need a car rental for my trip.":
+        "**1.** I'll fetch car rental options for your travel dates.\n\n---\n\n" +
+        "**2.** Please confirm pickup and drop-off details.\n\n" +
+        "[Show car rentals] [Cancel]",
+    }
+  },
+  'travel-approval': {
+    prompts: [
+      { text: "Has my travel request been approved?", highlighted: "travel request been approved" },
+      { text: "Who needs to approve my travel?", highlighted: "approve my travel" },
+    ],
+    responses: {
+      "Has my travel request been approved?":
+        "**1.** I'll check the approval status for your travel request.\n\n---\n\n" +
+        "**2.** If pending, I'll notify your manager and auto-approve if not received in 3 hours.\n\n" +
+        "[Check status] [Cancel]",
+      "Who needs to approve my travel?":
+        "**1.** Your travel request requires L1 and L2 manager approval.\n\n---\n\n" +
+        "**2.** I'll trigger approvals and keep you updated.\n\n" +
+        "[Notify managers] [Cancel]",
+    }
+  },
+  'travel-expenses': {
+    prompts: [
+      { text: "How do I log my travel expenses?", highlighted: "log my travel expenses" },
+      { text: "Can I get a report of my travel expenses?", highlighted: "report of my travel expenses" },
+    ],
+    responses: {
+      "How do I log my travel expenses?":
+        "**1.** I'll open the travel expense form for you.\n\n---\n\n" +
+        "**2.** Please enter your expenses and upload receipts.\n\n" +
+        "[Open expense form] [Cancel]",
+      "Can I get a report of my travel expenses?":
+        "**1.** I'll fetch your travel expense reports.\n\n---\n\n" +
+        "**2.** You can view, download, or export them as needed.\n\n" +
+        "[View reports] [Export] [Cancel]",
+    }
+  },
 };
 
 // Get heading for toggle button and card
@@ -519,6 +650,11 @@ const workflowHeadings: Record<string, string> = {
   'update-personal-info': 'Update Personal Info',
   'resource-onboarding': 'Resource Onboarding',
   'hr-helpdesk': 'HR Helpdesk',
+  'travel-request': 'Travel Request',
+  'visa-processing': 'Visa Processing',
+  'travel-booking': 'Travel Booking',
+  'travel-approval': 'Travel Approval',
+  'travel-expenses': 'Travel Expenses',
 };
 
 export default function Home() {

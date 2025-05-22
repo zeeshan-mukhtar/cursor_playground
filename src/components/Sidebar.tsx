@@ -50,9 +50,18 @@ const HRWorkflows = [
   { id: 'hr-helpdesk', name: 'HR Helpdesk', icon: <SupportAgent /> },
 ];
 
+const TravelDeskWorkflows = [
+  { id: 'travel-request', name: 'Travel Request', icon: <AssignmentInd /> },
+  { id: 'visa-processing', name: 'Visa Processing', icon: <Description /> },
+  { id: 'travel-booking', name: 'Travel Booking', icon: <BusinessCenter /> },
+  { id: 'travel-approval', name: 'Travel Approval', icon: <Group /> },
+  { id: 'travel-expenses', name: 'Travel Expenses', icon: <Info /> },
+];
+
 export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: SidebarProps) {
   const [openITNOC, setOpenITNOC] = useState(true);
   const [openHR, setOpenHR] = useState(false);
+  const [openTravelDesk, setOpenTravelDesk] = useState(false);
 
   return (
     <Drawer
@@ -88,6 +97,40 @@ export default function Sidebar({ selectedWorkflow, setSelectedWorkflow }: Sideb
         <Collapse in={openITNOC} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {ITNOCWorkflows.map((workflow) => (
+              <ListItem
+                button
+                key={workflow.id}
+                selected={selectedWorkflow === workflow.id}
+                onClick={() => setSelectedWorkflow(workflow.id)}
+                sx={{
+                  pl: 4,
+                  borderRadius: 99,
+                  my: 0.5,
+                  color: '#2a3535',
+                  background: selectedWorkflow === workflow.id ? '#e8eafd' : 'transparent',
+                  '&:hover': {
+                    background: '#e8eafd',
+                    color: '#4A6CF7',
+                  },
+                  transition: 'background 0.2s',
+                }}
+              >
+                <ListItemIcon sx={{ color: '#4A6CF7' }}>{workflow.icon}</ListItemIcon>
+                <ListItemText primary={workflow.name} />
+              </ListItem>
+            ))}
+          </List>
+        </Collapse>
+        <Divider sx={{ my: 2, bgcolor: '#e0e7ef' }} />
+        {/* Travel Desk Section */}
+        <ListItem button onClick={() => setOpenTravelDesk((prev) => !prev)} sx={{ borderRadius: 3, mb: 0.5 }}>
+          <ListItemIcon sx={{ color: '#4A6CF7' }}><AssignmentInd /></ListItemIcon>
+          <ListItemText primary={<span style={{ fontWeight: 600, fontSize: 16, color: '#2a3535' }}>Travel Desk</span>} />
+          {openTravelDesk ? <ExpandLess sx={{ color: '#4A6CF7' }} /> : <ExpandMore sx={{ color: '#4A6CF7' }} />}
+        </ListItem>
+        <Collapse in={openTravelDesk} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {TravelDeskWorkflows.map((workflow) => (
               <ListItem
                 button
                 key={workflow.id}
